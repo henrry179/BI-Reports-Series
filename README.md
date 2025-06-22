@@ -77,6 +77,17 @@ This is a comprehensive Business Intelligence (BI) reports series project, conta
 
 我们提供了一个专业的Web界面来浏览所有可视化图表：
 
+**方法一：一键启动（推荐）**
+```bash
+# 1. 克隆项目
+git clone https://github.com/henrry179/BI-Reports-Series.git
+cd BI-Reports-Series
+
+# 2. 一键启动（自动生成索引、启动服务器、打开浏览器）
+python start_web.py
+```
+
+**方法二：手动启动**
 ```bash
 # 1. 克隆项目
 git clone https://github.com/henrry179/BI-Reports-Series.git
