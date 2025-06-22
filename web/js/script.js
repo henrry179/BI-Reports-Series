@@ -453,4 +453,50 @@ document.addEventListener('DOMContentLoaded', () => {
 window.gallery = null;
 document.addEventListener('DOMContentLoaded', () => {
     window.gallery = gallery;
-}); 
+    initializeTabs();
+});
+
+// 选项卡功能
+function initializeTabs() {
+    const galleryTab = document.getElementById('gallery-tab');
+    const docsTab = document.getElementById('docs-tab');
+    const galleryContent = document.getElementById('gallery-content');
+    const docsContent = document.getElementById('docs-content');
+
+    if (!galleryTab || !docsTab || !galleryContent || !docsContent) {
+        console.warn('选项卡元素未找到');
+        return;
+    }
+
+    // 图表展示选项卡点击事件
+    galleryTab.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        // 切换选项卡状态
+        galleryTab.classList.add('active');
+        docsTab.classList.remove('active');
+        
+        // 切换内容显示
+        galleryContent.classList.add('active');
+        docsContent.classList.remove('active');
+        
+        // 滚动到顶部
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    // 项目文档选项卡点击事件
+    docsTab.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        // 切换选项卡状态
+        docsTab.classList.add('active');
+        galleryTab.classList.remove('active');
+        
+        // 切换内容显示
+        docsContent.classList.add('active');
+        galleryContent.classList.remove('active');
+        
+        // 滚动到顶部
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+} 

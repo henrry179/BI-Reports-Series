@@ -19,11 +19,14 @@
                     <span class="subtitle">可视化图表展示平台</span>
                 </div>
                 <nav class="nav">
+                    <button id="gallery-tab" class="nav-link tab-btn active">
+                        <i class="fas fa-images"></i> 图表展示
+                    </button>
+                    <button id="docs-tab" class="nav-link tab-btn">
+                        <i class="fas fa-book"></i> 项目文档
+                    </button>
                     <a href="https://github.com/henrry179/BI-Reports-Series" target="_blank" class="nav-link">
                         <i class="fab fa-github"></i> GitHub
-                    </a>
-                    <a href="../README.md" class="nav-link">
-                        <i class="fas fa-book"></i> 文档
                     </a>
                 </nav>
             </div>
@@ -33,7 +36,9 @@
     <!-- 主要内容 -->
     <main class="main">
         <div class="container">
-            <!-- 统计信息卡片 -->
+            <!-- 图表展示模块 -->
+            <div id="gallery-content" class="tab-content active">
+                <!-- 统计信息卡片 -->
             <section class="stats-section">
                 <div class="stats-grid">
                     <div class="stat-card">
@@ -132,6 +137,288 @@
                     </div>
                 </div>
             </section>
+            </div>
+            
+            <!-- 文档内容模块 -->
+            <div id="docs-content" class="tab-content">
+                <div class="docs-container">
+                    <div class="docs-header">
+                        <h1>
+                            <i class="fas fa-chart-line"></i>
+                            BI Reports Series | 商业智能报告系列
+                        </h1>
+                        <div class="badges">
+                            <span class="badge">
+                                <i class="fab fa-github"></i>
+                                MIT License
+                            </span>
+                            <span class="badge">
+                                <i class="fas fa-star"></i>
+                                开源项目
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="docs-content-wrapper">
+                        <section class="docs-section">
+                            <h2><i class="fas fa-info-circle"></i> 项目简介</h2>
+                            <p>这是一个综合性的商业智能（BI）报告系列项目，包含多个实际的数据可视化案例和系统的数据分析模型合集。项目旨在为数据分析师、业务分析师和相关从业者提供实用的分析模板和方法论指导。</p>
+                            <p>This is a comprehensive Business Intelligence (BI) reports series project, containing multiple practical data visualization cases and systematic data analysis model collections.</p>
+                        </section>
+
+                        <section class="docs-section">
+                            <h2><i class="fas fa-rocket"></i> 核心特性</h2>
+                            <div class="features-grid">
+                                <div class="feature-card">
+                                    <div class="feature-icon">🎯</div>
+                                    <h3>15+ 实际商业案例</h3>
+                                    <p>涵盖销售、金融、电商、营销等多个领域</p>
+                                </div>
+                                <div class="feature-card">
+                                    <div class="feature-icon">📊</div>
+                                    <h3>13+ 数据分析模型</h3>
+                                    <p>包含RFM、波士顿矩阵、AARRR等经典模型</p>
+                                </div>
+                                <div class="feature-card">
+                                    <div class="feature-icon">🎨</div>
+                                    <h3>丰富的可视化资源</h3>
+                                    <p>高质量图表、动态GIF演示、交互式仪表板</p>
+                                </div>
+                                <div class="feature-card">
+                                    <div class="feature-icon">🌐</div>
+                                    <h3>专业Web展示平台</h3>
+                                    <p>499张图表的智能搜索、分类浏览、高清预览</p>
+                                </div>
+                                <div class="feature-card">
+                                    <div class="feature-icon">📝</div>
+                                    <h3>详细的分析文档</h3>
+                                    <p>每个案例都有完整的分析过程和方法说明</p>
+                                </div>
+                                <div class="feature-card">
+                                    <div class="feature-icon">🔧</div>
+                                    <h3>可复用的模板</h3>
+                                    <p>提供标准化的分析框架和实现方法</p>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="docs-section">
+                            <h2><i class="fas fa-folder-tree"></i> 项目结构</h2>
+                            <div class="code-block">
+                                <pre><code>📁 BI-Reports-Series/
+├── 📊 数据可视化报告案例/
+│   ├── 销售数据分析/
+│   ├── 银行理财产品购买预测/
+│   ├── 电商平台交易数据分析/
+│   ├── 手游广告投放数据分析/
+│   ├── 用户运营分析(AARRR模型)/
+│   └── ... (更多案例)
+├── 📈 数据分析模型合集/
+│   ├── RFM客户价值分析/
+│   ├── 波士顿矩阵分析/
+│   ├── 购物篮分析/
+│   ├── 留存分析/
+│   └── ... (更多模型)
+├── 📚 方法论指南/
+├── 🎨 可视化图表索引/
+└── 📖 README.md</code></pre>
+                            </div>
+                        </section>
+
+                        <section class="docs-section">
+                            <h2><i class="fas fa-showcase"></i> 案例展示</h2>
+                            <div class="cases-grid">
+                                <div class="case-card">
+                                    <h3>🛒 销售数据分析</h3>
+                                    <ul>
+                                        <li><strong>应用场景</strong>: 零售企业销售业绩分析</li>
+                                        <li><strong>关键指标</strong>: 销售金额、订购数量、客户分析、地区分析</li>
+                                        <li><strong>分析方法</strong>: 时间序列分析、同比环比、帕累托分析</li>
+                                    </ul>
+                                </div>
+                                <div class="case-card">
+                                    <h3>🏦 银行理财产品购买预测</h3>
+                                    <ul>
+                                        <li><strong>应用场景</strong>: 金融产品营销和客户细分</li>
+                                        <li><strong>分析模型</strong>: 机器学习预测模型、客户画像分析</li>
+                                        <li><strong>业务价值</strong>: 提升营销转化率、优化产品推荐</li>
+                                    </ul>
+                                </div>
+                                <div class="case-card">
+                                    <h3>📱 电商平台交易数据分析</h3>
+                                    <ul>
+                                        <li><strong>覆盖领域</strong>: 巴西电商、直播电商、O2O平台</li>
+                                        <li><strong>分析维度</strong>: 用户行为、商品表现、运营效果</li>
+                                        <li><strong>可视化特色</strong>: 动态交互图表、实时数据监控</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="docs-section">
+                            <h2><i class="fas fa-database"></i> 数据分析模型库</h2>
+                            <div class="table-container">
+                                <table class="models-table">
+                                    <thead>
+                                        <tr>
+                                            <th>模型类型</th>
+                                            <th>应用场景</th>
+                                            <th>核心指标</th>
+                                            <th>业务价值</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>RFM模型</strong></td>
+                                            <td>客户价值分析</td>
+                                            <td>最近购买、频次、金额</td>
+                                            <td>客户细分、精准营销</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>波士顿矩阵</strong></td>
+                                            <td>产品组合分析</td>
+                                            <td>市场增长率、市场份额</td>
+                                            <td>资源配置、战略决策</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>AARRR模型</strong></td>
+                                            <td>用户运营分析</td>
+                                            <td>获客、激活、留存、收益、传播</td>
+                                            <td>增长优化、运营策略</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>购物篮分析</strong></td>
+                                            <td>关联规则挖掘</td>
+                                            <td>支持度、置信度、提升度</td>
+                                            <td>商品推荐、交叉销售</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>留存分析</strong></td>
+                                            <td>用户粘性分析</td>
+                                            <td>留存率、流失率</td>
+                                            <td>产品优化、用户体验</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
+
+                        <section class="docs-section">
+                            <h2><i class="fas fa-play"></i> 快速开始</h2>
+                            <div class="quick-start">
+                                <h3>🌐 Web可视化展示平台（推荐）</h3>
+                                <div class="code-block">
+                                    <h4>方法一：一键启动（推荐）</h4>
+                                    <pre><code># 1. 克隆项目
+git clone https://github.com/henrry179/BI-Reports-Series.git
+cd BI-Reports-Series
+
+# 2. 一键启动（自动生成索引、启动服务器、打开浏览器）
+python start_web.py</code></pre>
+                                </div>
+                                <div class="code-block">
+                                    <h4>方法二：手动启动</h4>
+                                    <pre><code># 1. 克隆项目
+git clone https://github.com/henrry179/BI-Reports-Series.git
+cd BI-Reports-Series
+
+# 2. 启动本地服务器
+python -m http.server 8000
+
+# 3. 在浏览器访问
+# http://localhost:8000/web/</code></pre>
+                                </div>
+                                <div class="web-features">
+                                    <h4>Web平台特性：</h4>
+                                    <ul>
+                                        <li>🔍 <strong>智能搜索</strong>: 499张图表实时搜索和筛选</li>
+                                        <li>📊 <strong>多视图模式</strong>: 网格、列表、文件夹三种浏览方式</li>
+                                        <li>🖼️ <strong>高清预览</strong>: 点击查看大图，支持下载和全屏</li>
+                                        <li>📱 <strong>响应式设计</strong>: 完美适配手机、平板、桌面</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="docs-section">
+                            <h2><i class="fas fa-tools"></i> 技术栈</h2>
+                            <div class="tech-stack">
+                                <div class="tech-category">
+                                    <h4>数据可视化</h4>
+                                    <div class="tech-tags">
+                                        <span class="tech-tag">Power BI</span>
+                                        <span class="tech-tag">FineBI</span>
+                                        <span class="tech-tag">Tableau</span>
+                                    </div>
+                                </div>
+                                <div class="tech-category">
+                                    <h4>数据分析</h4>
+                                    <div class="tech-tags">
+                                        <span class="tech-tag">Python</span>
+                                        <span class="tech-tag">R</span>
+                                        <span class="tech-tag">SQL</span>
+                                        <span class="tech-tag">DAX</span>
+                                    </div>
+                                </div>
+                                <div class="tech-category">
+                                    <h4>机器学习</h4>
+                                    <div class="tech-tags">
+                                        <span class="tech-tag">Scikit-learn</span>
+                                        <span class="tech-tag">TensorFlow</span>
+                                    </div>
+                                </div>
+                                <div class="tech-category">
+                                    <h4>可视化库</h4>
+                                    <div class="tech-tags">
+                                        <span class="tech-tag">Matplotlib</span>
+                                        <span class="tech-tag">Plotly</span>
+                                        <span class="tech-tag">D3.js</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="docs-section">
+                            <h2><i class="fas fa-heart"></i> 贡献指南</h2>
+                            <div class="contribute-info">
+                                <p>我们欢迎社区贡献！请阅读 <a href="https://github.com/henrry179/BI-Reports-Series/blob/main/CONTRIBUTING.md" target="_blank">CONTRIBUTING.md</a> 了解如何参与项目。</p>
+                                <h4>如何贡献</h4>
+                                <ol>
+                                    <li>Fork 本项目</li>
+                                    <li>创建特性分支 (<code>git checkout -b feature/AmazingFeature</code>)</li>
+                                    <li>提交更改 (<code>git commit -m 'Add some AmazingFeature'</code>)</li>
+                                    <li>推送到分支 (<code>git push origin feature/AmazingFeature</code>)</li>
+                                    <li>创建 Pull Request</li>
+                                </ol>
+                                <div class="contribute-types">
+                                    <h4>贡献类型</h4>
+                                    <div class="contribute-tags">
+                                        <span class="contribute-tag">💡 新增分析案例</span>
+                                        <span class="contribute-tag">📊 改进可视化设计</span>
+                                        <span class="contribute-tag">🐛 修复文档问题</span>
+                                        <span class="contribute-tag">📝 完善分析方法</span>
+                                        <span class="contribute-tag">🌐 多语言支持</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="docs-section">
+                            <h2><i class="fas fa-envelope"></i> 联系我们</h2>
+                            <div class="contact-info">
+                                <div class="contact-item">
+                                    <i class="fab fa-github"></i>
+                                    <a href="https://github.com/henrry179/BI-Reports-Series" target="_blank">GitHub项目</a>
+                                </div>
+                                <div class="contact-item">
+                                    <i class="fas fa-star"></i>
+                                    <span>如果这个项目对您有帮助，请给我们一个星标！</span>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </div>
         </div>
     </main>
 
