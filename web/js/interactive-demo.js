@@ -48,7 +48,28 @@ class InteractiveDemo {
         const salesYearSelect = document.getElementById('sales-year-select');
         if (salesYearSelect) {
             salesYearSelect.addEventListener('change', (e) => {
-                this.updateSalesTrendChart(e.target.value);
+                this.updateSalesTrendChart();
+            });
+        }
+
+        const salesPeriodSelect = document.getElementById('sales-period-select');
+        if (salesPeriodSelect) {
+            salesPeriodSelect.addEventListener('change', (e) => {
+                this.updateSalesTrendChart();
+            });
+        }
+
+        const categoryDimension = document.getElementById('category-dimension');
+        if (categoryDimension) {
+            categoryDimension.addEventListener('change', (e) => {
+                this.updateCategoryChart();
+            });
+        }
+
+        const regionDimension = document.getElementById('region-dimension');
+        if (regionDimension) {
+            regionDimension.addEventListener('change', (e) => {
+                this.updateRegionChart();
             });
         }
 
@@ -315,33 +336,113 @@ class InteractiveDemo {
     }
 
     initializeDemoData() {
-        // 销售数据
+        // 销售数据 - 扩展为多时间周期
         this.salesData = {
             2023: {
-                months: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
-                sales: [320, 290, 450, 380, 520, 480, 630, 590, 720, 680, 800, 750]
+                daily: {
+                    labels: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
+                    data: [45, 52, 48, 61, 58, 43, 39]
+                },
+                weekly: {
+                    labels: ['第1周', '第2周', '第3周', '第4周'],
+                    data: [280, 320, 295, 380]
+                },
+                monthly: {
+                    labels: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+                    data: [320, 290, 450, 380, 520, 480, 630, 590, 720, 680, 800, 750]
+                },
+                quarterly: {
+                    labels: ['Q1', 'Q2', 'Q3', 'Q4'],
+                    data: [1060, 1380, 1940, 2230]
+                },
+                yearly: {
+                    labels: ['2023年'],
+                    data: [6610]
+                }
             },
             2024: {
-                months: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
-                sales: [380, 420, 520, 480, 680, 750, 820, 780, 950, 900, 1080, 1150]
+                daily: {
+                    labels: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
+                    data: [55, 62, 58, 71, 68, 53, 49]
+                },
+                weekly: {
+                    labels: ['第1周', '第2周', '第3周', '第4周'],
+                    data: [350, 380, 365, 420]
+                },
+                monthly: {
+                    labels: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+                    data: [380, 420, 520, 480, 680, 750, 820, 780, 950, 900, 1080, 1150]
+                },
+                quarterly: {
+                    labels: ['Q1', 'Q2', 'Q3', 'Q4'],
+                    data: [1320, 1910, 2550, 3130]
+                },
+                yearly: {
+                    labels: ['2024年'],
+                    data: [8910]
+                }
             }
         };
 
         this.categoryData = {
-            labels: ['电子产品', '服装鞋帽', '家居用品', '食品饮料', '体育用品', '图书文具'],
-            values: [35, 25, 20, 12, 5, 3]
+            product: {
+                labels: ['电子产品', '服装鞋帽', '家居用品', '食品饮料', '体育用品', '图书文具'],
+                values: [35, 25, 20, 12, 5, 3]
+            },
+            brand: {
+                labels: ['品牌A', '品牌B', '品牌C', '品牌D', '品牌E', '其他'],
+                values: [28, 22, 18, 15, 12, 5]
+            },
+            price: {
+                labels: ['0-100元', '100-500元', '500-1000元', '1000-2000元', '2000-5000元', '5000元以上'],
+                values: [15, 25, 20, 18, 15, 7]
+            },
+            channel: {
+                labels: ['线上直销', '电商平台', '线下门店', '代理商', '批发商', '其他渠道'],
+                values: [30, 25, 20, 12, 8, 5]
+            },
+            customer: {
+                labels: ['企业客户', '个人消费者', '政府采购', '教育机构', '医疗机构', '其他机构'],
+                values: [32, 28, 15, 12, 8, 5]
+            },
+            season: {
+                labels: ['春季热销', '夏季热销', '秋季热销', '冬季热销', '全年热销', '节庆热销'],
+                values: [18, 22, 20, 15, 20, 5]
+            }
         };
 
         this.regionData = {
-            labels: ['华东', '华南', '华北', '华中', '西南', '东北', '西北'],
-            values: [28, 22, 18, 15, 10, 4, 3]
+            region: {
+                labels: ['华东', '华南', '华北', '华中', '西南', '东北', '西北'],
+                values: [28, 22, 18, 15, 10, 4, 3]
+            },
+            city: {
+                labels: ['北京', '上海', '广州', '深圳', '杭州', '成都', '武汉'],
+                values: [18, 16, 14, 12, 10, 8, 6]
+            },
+            store: {
+                labels: ['旗舰店', '标准店', '社区店', '便利店', '专卖店'],
+                values: [25, 22, 20, 18, 15]
+            },
+            economic: {
+                labels: ['珠三角', '长三角', '京津冀', '长江中游', '成渝经济圈'],
+                values: [28, 26, 20, 16, 10]
+            },
+            population: {
+                labels: ['一线城市', '新一线城市', '二线城市', '三线城市', '四线及以下'],
+                values: [32, 25, 20, 15, 8]
+            }
         };
 
         this.performanceData = {
             names: ['张明', '李华', '王芳', '陈强', '刘婷', '赵磊', '孙娜', '周鹏'],
             sales: [1250, 1180, 1050, 980, 920, 850, 780, 720],
             orders: [85, 78, 72, 68, 64, 58, 52, 48],
-            customers: [65, 62, 58, 54, 51, 47, 43, 39]
+            customers: [65, 62, 58, 54, 51, 47, 43, 39],
+            conversion: [78.5, 76.2, 74.8, 72.1, 69.5, 67.2, 64.8, 62.3],
+            retention: [85.2, 82.1, 79.5, 76.8, 74.2, 71.5, 68.9, 66.1],
+            avgOrder: [14.7, 15.1, 14.6, 14.4, 14.4, 14.7, 15.0, 15.0],
+            productivity: [92.5, 89.2, 86.8, 84.1, 81.5, 78.9, 76.2, 73.8]
         };
 
         // 财务数据
@@ -442,13 +543,13 @@ class InteractiveDemo {
     }
 
     renderSalesCharts() {
-        this.renderSalesTrendChart('2024');
-        this.renderCategoryChart('pie');
-        this.renderRegionChart('bar');
-        this.renderPerformanceChart('sales');
+        this.renderSalesTrendChart();
+        this.renderCategoryChart();
+        this.renderRegionChart();
+        this.renderPerformanceChart();
     }
 
-    renderSalesTrendChart(year) {
+    renderSalesTrendChart() {
         const ctx = document.getElementById('sales-trend-chart');
         if (!ctx) return;
 
@@ -457,16 +558,31 @@ class InteractiveDemo {
             this.charts.salesTrend.destroy();
         }
 
-        const data = this.salesData[year];
+        // 获取当前选择的年份和周期
+        const yearSelect = document.getElementById('sales-year-select');
+        const periodSelect = document.getElementById('sales-period-select');
+        
+        const year = yearSelect ? yearSelect.value : '2024';
+        const period = periodSelect ? periodSelect.value : 'monthly';
+        
+        const data = this.salesData[year][period];
         const themeColors = this.getThemeColors(this.currentDemo);
+        
+        const periodLabels = {
+            daily: '日销售额(万元)',
+            weekly: '周销售额(万元)', 
+            monthly: '月销售额(万元)',
+            quarterly: '季度销售额(万元)',
+            yearly: '年销售额(万元)'
+        };
         
         this.charts.salesTrend = new Chart(ctx, {
             type: 'line',
             data: {
-                labels: data.months,
+                labels: data.labels,
                 datasets: [{
-                    label: `${year}年销售额(万元)`,
-                    data: data.sales,
+                    label: `${year}年${periodLabels[period]}`,
+                    data: data.data,
                     borderColor: themeColors.primary,
                     backgroundColor: themeColors.primary + '20',
                     borderWidth: 3,
@@ -516,11 +632,11 @@ class InteractiveDemo {
         });
     }
 
-    updateSalesTrendChart(year) {
-        this.renderSalesTrendChart(year);
+    updateSalesTrendChart() {
+        this.renderSalesTrendChart();
     }
 
-    renderCategoryChart(type) {
+    renderCategoryChart() {
         const ctx = document.getElementById('category-chart');
         if (!ctx) return;
 
@@ -528,15 +644,22 @@ class InteractiveDemo {
             this.charts.category.destroy();
         }
 
+        // 获取当前选择的维度和图表类型
+        const dimensionSelect = document.getElementById('category-dimension');
+        const dimension = dimensionSelect ? dimensionSelect.value : 'product';
+        
+        const chartType = document.querySelector('[data-chart].active')?.dataset.chart || 'pie';
+
         const themeColors = this.getThemeColors(this.currentDemo);
-        const colors = this.generateColorPalette(themeColors.primary, 6);
+        const data = this.categoryData[dimension];
+        const colors = this.generateColorPalette(themeColors.primary, data.labels.length);
 
         this.charts.category = new Chart(ctx, {
-            type: type,
+            type: chartType,
             data: {
-                labels: this.categoryData.labels,
+                labels: data.labels,
                 datasets: [{
-                    data: this.categoryData.values,
+                    data: data.values,
                     backgroundColor: colors,
                     borderColor: colors.map(color => color),
                     borderWidth: 2,
@@ -566,11 +689,11 @@ class InteractiveDemo {
         });
     }
 
-    updateCategoryChart(type) {
-        this.renderCategoryChart(type);
+    updateCategoryChart() {
+        this.renderCategoryChart();
     }
 
-    renderRegionChart(viewType) {
+    renderRegionChart() {
         const ctx = document.getElementById('region-chart');
         if (!ctx) return;
 
@@ -578,17 +701,24 @@ class InteractiveDemo {
             this.charts.region.destroy();
         }
 
+        // 获取当前选择的维度和视图类型
+        const dimensionSelect = document.getElementById('region-dimension');
+        const dimension = dimensionSelect ? dimensionSelect.value : 'region';
+        
+        const viewType = document.querySelector('[data-view].active')?.dataset.view || 'bar';
+
         const chartType = 'bar';
         const indexAxis = viewType === 'horizontal' ? 'y' : 'x';
         const themeColors = this.getThemeColors(this.currentDemo);
+        const data = this.regionData[dimension];
 
         this.charts.region = new Chart(ctx, {
             type: chartType,
             data: {
-                labels: this.regionData.labels,
+                labels: data.labels,
                 datasets: [{
                     label: '销售额占比(%)',
-                    data: this.regionData.values,
+                    data: data.values,
                     backgroundColor: themeColors.primary + 'CC',
                     borderColor: themeColors.primary,
                     borderWidth: 1,
@@ -624,11 +754,11 @@ class InteractiveDemo {
         });
     }
 
-    updateRegionChart(viewType) {
-        this.renderRegionChart(viewType);
+    updateRegionChart() {
+        this.renderRegionChart();
     }
 
-    renderPerformanceChart(metric) {
+    renderPerformanceChart() {
         const ctx = document.getElementById('performance-chart');
         if (!ctx) return;
 
@@ -636,20 +766,51 @@ class InteractiveDemo {
             this.charts.performance.destroy();
         }
 
-        let data, label;
+        // 获取当前选择的指标
+        const metricSelect = document.getElementById('performance-metric');
+        const metric = metricSelect ? metricSelect.value : 'sales';
+
+        let data, label, unit = '';
         switch (metric) {
             case 'sales':
                 data = this.performanceData.sales;
-                label = '销售额(万元)';
+                label = '销售额';
+                unit = '万元';
                 break;
             case 'orders':
                 data = this.performanceData.orders;
                 label = '订单数';
+                unit = '个';
                 break;
             case 'customers':
                 data = this.performanceData.customers;
                 label = '客户数';
+                unit = '人';
                 break;
+            case 'conversion':
+                data = this.performanceData.conversion;
+                label = '转化率';
+                unit = '%';
+                break;
+            case 'retention':
+                data = this.performanceData.retention;
+                label = '客户留存率';
+                unit = '%';
+                break;
+            case 'avgOrder':
+                data = this.performanceData.avgOrder;
+                label = '平均订单金额';
+                unit = '千元';
+                break;
+            case 'productivity':
+                data = this.performanceData.productivity;
+                label = '工作效率';
+                unit = '分';
+                break;
+            default:
+                data = this.performanceData.sales;
+                label = '销售额';
+                unit = '万元';
         }
 
         this.charts.performance = new Chart(ctx, {
@@ -657,7 +818,7 @@ class InteractiveDemo {
             data: {
                 labels: this.performanceData.names,
                 datasets: [{
-                    label: label,
+                    label: `${label}(${unit})`,
                     data: data,
                     backgroundColor: data.map((_, i) => `hsl(${220 + i * 20}, 70%, ${60 + i * 3}%)`),
                     borderColor: data.map((_, i) => `hsl(${220 + i * 20}, 70%, ${50 + i * 3}%)`),
@@ -686,8 +847,8 @@ class InteractiveDemo {
         });
     }
 
-    updatePerformanceChart(metric) {
-        this.renderPerformanceChart(metric);
+    updatePerformanceChart() {
+        this.renderPerformanceChart();
     }
 
     renderFinancialCharts() {

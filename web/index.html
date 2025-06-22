@@ -201,8 +201,15 @@
                         <div class="demo-charts-grid">
                             <div class="chart-container">
                                 <div class="chart-header">
-                                    <h3>月度销售趋势</h3>
+                                    <h3>销售趋势分析</h3>
                                     <div class="chart-controls">
+                                        <select id="sales-period-select">
+                                            <option value="daily">日度分析</option>
+                                            <option value="weekly">周度分析</option>
+                                            <option value="monthly" selected>月度分析</option>
+                                            <option value="quarterly">季度分析</option>
+                                            <option value="yearly">年度分析</option>
+                                        </select>
                                         <select id="sales-year-select">
                                             <option value="2023">2023年</option>
                                             <option value="2024" selected>2024年</option>
@@ -216,6 +223,14 @@
                                 <div class="chart-header">
                                     <h3>产品类别分布</h3>
                                     <div class="chart-controls">
+                                        <select id="category-dimension">
+                                            <option value="product">产品类别</option>
+                                            <option value="brand">品牌分布</option>
+                                            <option value="price">价格区间</option>
+                                            <option value="channel">销售渠道</option>
+                                            <option value="customer">客户类型</option>
+                                            <option value="season">季节性分析</option>
+                                        </select>
                                         <button class="toggle-btn active" data-chart="pie">饼图</button>
                                         <button class="toggle-btn" data-chart="doughnut">环形图</button>
                                     </div>
@@ -227,6 +242,13 @@
                                 <div class="chart-header">
                                     <h3>地区销售对比</h3>
                                     <div class="chart-controls">
+                                        <select id="region-dimension">
+                                            <option value="region">行政区域</option>
+                                            <option value="city">重点城市</option>
+                                            <option value="store">门店类型</option>
+                                            <option value="economic">经济区域</option>
+                                            <option value="population">人口密度</option>
+                                        </select>
                                         <button class="toggle-btn active" data-view="bar">柱状图</button>
                                         <button class="toggle-btn" data-view="horizontal">横向对比</button>
                                     </div>
@@ -242,6 +264,10 @@
                                             <option value="sales">销售额</option>
                                             <option value="orders">订单数</option>
                                             <option value="customers">客户数</option>
+                                            <option value="conversion">转化率</option>
+                                            <option value="retention">客户留存率</option>
+                                            <option value="avgOrder">平均订单金额</option>
+                                            <option value="productivity">工作效率</option>
                                         </select>
                                     </div>
                                 </div>
@@ -263,8 +289,11 @@
                                     <h3>盈利能力分析</h3>
                                     <div class="chart-controls">
                                         <select id="profit-period">
-                                            <option value="quarterly">季度对比</option>
-                                            <option value="yearly">年度对比</option>
+                                            <option value="daily">日度分析</option>
+                                            <option value="weekly">周度分析</option>
+                                            <option value="monthly">月度分析</option>
+                                            <option value="quarterly" selected>季度分析</option>
+                                            <option value="yearly">年度分析</option>
                                         </select>
                                     </div>
                                 </div>
@@ -276,9 +305,13 @@
                                     <h3>财务健康度雷达图</h3>
                                     <div class="chart-controls">
                                         <select id="financial-company">
-                                            <option value="company1">公司A</option>
-                                            <option value="company2">公司B</option>
-                                            <option value="company3">公司C</option>
+                                            <option value="company1">本公司</option>
+                                            <option value="company2">竞争对手A</option>
+                                            <option value="company3">竞争对手B</option>
+                                            <option value="company4">行业标杆</option>
+                                            <option value="company5">行业平均</option>
+                                            <option value="comparison">多公司对比</option>
+                                            <option value="historical">历史对比</option>
                                         </select>
                                     </div>
                                 </div>
@@ -311,8 +344,11 @@
                                     <h3>用户留存分析</h3>
                                     <div class="chart-controls">
                                         <select id="retention-cohort">
-                                            <option value="monthly">月留存</option>
-                                            <option value="weekly">周留存</option>
+                                            <option value="daily">日度留存</option>
+                                            <option value="weekly" selected>周度留存</option>
+                                            <option value="monthly">月度留存</option>
+                                            <option value="quarterly">季度留存</option>
+                                            <option value="yearly">年度留存</option>
                                         </select>
                                     </div>
                                 </div>
@@ -324,8 +360,11 @@
                                     <h3>用户活跃度热力图</h3>
                                     <div class="chart-controls">
                                         <select id="activity-period">
-                                            <option value="daily">日活跃度</option>
-                                            <option value="hourly">小时活跃度</option>
+                                            <option value="hourly">时度活跃度</option>
+                                            <option value="daily" selected>日度活跃度</option>
+                                            <option value="weekly">周度活跃度</option>
+                                            <option value="monthly">月度活跃度</option>
+                                            <option value="quarterly">季度活跃度</option>
                                         </select>
                                     </div>
                                 </div>
@@ -360,6 +399,10 @@
                                         <select id="market-segment">
                                             <option value="product">产品市场</option>
                                             <option value="region">区域市场</option>
+                                            <option value="channel">渠道市场</option>
+                                            <option value="customer">客户细分</option>
+                                            <option value="competitor">竞争对手</option>
+                                            <option value="industry">行业细分</option>
                                         </select>
                                     </div>
                                 </div>
@@ -371,8 +414,12 @@
                                     <h3>波士顿矩阵分析</h3>
                                     <div class="chart-controls">
                                         <select id="boston-data">
-                                            <option value="current">当前产品</option>
-                                            <option value="projected">预测分析</option>
+                                            <option value="current">当前产品组合</option>
+                                            <option value="projected">未来预测</option>
+                                            <option value="competitive">竞争对比</option>
+                                            <option value="historical">历史演变</option>
+                                            <option value="scenario1">乐观场景</option>
+                                            <option value="scenario2">悲观场景</option>
                                         </select>
                                     </div>
                                 </div>
@@ -405,8 +452,12 @@
                                     <h3>转化漏斗分析</h3>
                                     <div class="chart-controls">
                                         <select id="funnel-type">
-                                            <option value="conversion">用户转化</option>
+                                            <option value="conversion">用户转化漏斗</option>
                                             <option value="marketing">营销漏斗</option>
+                                            <option value="sales">销售漏斗</option>
+                                            <option value="retention">留存漏斗</option>
+                                            <option value="payment">支付漏斗</option>
+                                            <option value="product">产品使用漏斗</option>
                                         </select>
                                     </div>
                                 </div>
@@ -418,8 +469,11 @@
                                     <h3>趋势对比分析</h3>
                                     <div class="chart-controls">
                                         <select id="area-type">
-                                            <option value="comparison">年度对比</option>
-                                            <option value="platform">平台对比</option>
+                                            <option value="daily">日度对比</option>
+                                            <option value="weekly">周度对比</option>
+                                            <option value="monthly">月度对比</option>
+                                            <option value="quarterly">季度对比</option>
+                                            <option value="yearly" selected>年度对比</option>
                                         </select>
                                     </div>
                                 </div>
@@ -433,6 +487,11 @@
                                         <select id="polar-type">
                                             <option value="performance">绩效评估</option>
                                             <option value="brand">品牌分析</option>
+                                            <option value="customer">客户满意度</option>
+                                            <option value="product">产品评价</option>
+                                            <option value="service">服务质量</option>
+                                            <option value="market">市场表现</option>
+                                            <option value="risk">风险评估</option>
                                         </select>
                                     </div>
                                 </div>
@@ -446,6 +505,10 @@
                                         <select id="gauge-type">
                                             <option value="kpi">KPI完成度</option>
                                             <option value="satisfaction">客户满意度</option>
+                                            <option value="efficiency">运营效率</option>
+                                            <option value="quality">质量指标</option>
+                                            <option value="revenue">收入达成率</option>
+                                            <option value="cost">成本控制率</option>
                                         </select>
                                     </div>
                                 </div>
@@ -467,8 +530,12 @@
                                     <h3>用户流向分析</h3>
                                     <div class="chart-controls">
                                         <select id="sankey-type">
-                                            <option value="userflow">用户路径</option>
+                                            <option value="userflow">用户路径流向</option>
                                             <option value="aarrr">AARRR模型</option>
+                                            <option value="conversion">转化流向</option>
+                                            <option value="channel">渠道流向</option>
+                                            <option value="feature">功能使用流向</option>
+                                            <option value="content">内容消费流向</option>
                                         </select>
                                     </div>
                                 </div>
@@ -480,8 +547,12 @@
                                     <h3>层级结构分析</h3>
                                     <div class="chart-controls">
                                         <select id="tree-type">
-                                            <option value="hierarchy">产品层级</option>
-                                            <option value="region">地区层级</option>
+                                            <option value="hierarchy">产品层级结构</option>
+                                            <option value="region">地区层级结构</option>
+                                            <option value="organization">组织层级结构</option>
+                                            <option value="category">类目层级结构</option>
+                                            <option value="customer">客户层级结构</option>
+                                            <option value="channel">渠道层级结构</option>
                                         </select>
                                     </div>
                                 </div>
@@ -493,8 +564,13 @@
                                     <h3>关联性热力图</h3>
                                     <div class="chart-controls">
                                         <select id="heatmap-type">
-                                            <option value="correlation">相关性分析</option>
-                                            <option value="activity">活跃度分析</option>
+                                            <option value="correlation">数据相关性</option>
+                                            <option value="activity">用户活跃度</option>
+                                            <option value="interaction">交互关联度</option>
+                                            <option value="preference">偏好关联度</option>
+                                            <option value="behavior">行为关联度</option>
+                                            <option value="geographic">地理关联度</option>
+                                            <option value="temporal">时间关联度</option>
                                         </select>
                                     </div>
                                 </div>
@@ -508,6 +584,10 @@
                                         <select id="liquid-type">
                                             <option value="progress">项目完成度</option>
                                             <option value="target">目标达成率</option>
+                                            <option value="sales">销售完成度</option>
+                                            <option value="budget">预算执行率</option>
+                                            <option value="quality">质量达标率</option>
+                                            <option value="efficiency">效率提升率</option>
                                         </select>
                                     </div>
                                 </div>
