@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="css/style.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
 </head>
 <body>
     <!-- 顶部导航 -->
@@ -21,6 +23,9 @@
                 <nav class="nav">
                     <button id="gallery-tab" class="nav-link tab-btn active">
                         <i class="fas fa-images"></i> 图表展示
+                    </button>
+                    <button id="demo-tab" class="nav-link tab-btn">
+                        <i class="fas fa-chart-line"></i> 交互演示
                     </button>
                     <button id="docs-tab" class="nav-link tab-btn">
                         <i class="fas fa-book"></i> 项目文档
@@ -137,6 +142,264 @@
                     </div>
                 </div>
             </section>
+            </div>
+            
+            <!-- 交互演示模块 -->
+            <div id="demo-content" class="tab-content">
+                <div class="demo-container">
+                    <div class="demo-header">
+                        <h1>
+                            <i class="fas fa-chart-line"></i>
+                            交互式图表演示
+                        </h1>
+                        <p class="demo-subtitle">基于BI Reports Series项目案例的交互式数据可视化演示</p>
+                    </div>
+
+                    <!-- 演示导航菜单 -->
+                    <div class="demo-nav">
+                        <div class="demo-nav-items">
+                            <button class="demo-nav-btn active" data-demo="sales">
+                                <i class="fas fa-shopping-cart"></i>
+                                销售数据分析
+                            </button>
+                            <button class="demo-nav-btn" data-demo="financial">
+                                <i class="fas fa-chart-pie"></i>
+                                财务分析
+                            </button>
+                            <button class="demo-nav-btn" data-demo="user">
+                                <i class="fas fa-users"></i>
+                                用户分析
+                            </button>
+                            <button class="demo-nav-btn" data-demo="market">
+                                <i class="fas fa-globe"></i>
+                                市场分析
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 销售数据分析演示 -->
+                    <div id="sales-demo" class="demo-section active">
+                        <div class="demo-section-header">
+                            <h2>销售数据分析 - 交互式演示</h2>
+                            <p>基于零售企业销售业绩的多维度数据分析</p>
+                        </div>
+                        
+                        <div class="demo-charts-grid">
+                            <div class="chart-container">
+                                <div class="chart-header">
+                                    <h3>月度销售趋势</h3>
+                                    <div class="chart-controls">
+                                        <select id="sales-year-select">
+                                            <option value="2023">2023年</option>
+                                            <option value="2024" selected>2024年</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <canvas id="sales-trend-chart"></canvas>
+                            </div>
+
+                            <div class="chart-container">
+                                <div class="chart-header">
+                                    <h3>产品类别分布</h3>
+                                    <div class="chart-controls">
+                                        <button class="toggle-btn active" data-chart="pie">饼图</button>
+                                        <button class="toggle-btn" data-chart="doughnut">环形图</button>
+                                    </div>
+                                </div>
+                                <canvas id="category-chart"></canvas>
+                            </div>
+
+                            <div class="chart-container">
+                                <div class="chart-header">
+                                    <h3>地区销售对比</h3>
+                                    <div class="chart-controls">
+                                        <button class="toggle-btn active" data-view="bar">柱状图</button>
+                                        <button class="toggle-btn" data-view="horizontal">横向对比</button>
+                                    </div>
+                                </div>
+                                <canvas id="region-chart"></canvas>
+                            </div>
+
+                            <div class="chart-container full-width">
+                                <div class="chart-header">
+                                    <h3>销售员业绩排行榜</h3>
+                                    <div class="chart-controls">
+                                        <select id="performance-metric">
+                                            <option value="sales">销售额</option>
+                                            <option value="orders">订单数</option>
+                                            <option value="customers">客户数</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <canvas id="performance-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 财务分析演示 -->
+                    <div id="financial-demo" class="demo-section">
+                        <div class="demo-section-header">
+                            <h2>财务分析 - 交互式演示</h2>
+                            <p>企业财务健康状况的多维度评估分析</p>
+                        </div>
+                        
+                        <div class="demo-charts-grid">
+                            <div class="chart-container">
+                                <div class="chart-header">
+                                    <h3>盈利能力分析</h3>
+                                    <div class="chart-controls">
+                                        <select id="profit-period">
+                                            <option value="quarterly">季度对比</option>
+                                            <option value="yearly">年度对比</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <canvas id="profit-chart"></canvas>
+                            </div>
+
+                            <div class="chart-container">
+                                <div class="chart-header">
+                                    <h3>财务健康度雷达图</h3>
+                                    <div class="chart-controls">
+                                        <select id="financial-company">
+                                            <option value="company1">公司A</option>
+                                            <option value="company2">公司B</option>
+                                            <option value="company3">公司C</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <canvas id="financial-radar-chart"></canvas>
+                            </div>
+
+                            <div class="chart-container full-width">
+                                <div class="chart-header">
+                                    <h3>资产负债结构分析</h3>
+                                    <div class="chart-controls">
+                                        <button class="toggle-btn active" data-structure="assets">资产结构</button>
+                                        <button class="toggle-btn" data-structure="liabilities">负债结构</button>
+                                    </div>
+                                </div>
+                                <canvas id="structure-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 用户分析演示 -->
+                    <div id="user-demo" class="demo-section">
+                        <div class="demo-section-header">
+                            <h2>用户分析 - 交互式演示</h2>
+                            <p>基于用户行为数据的深度分析和洞察</p>
+                        </div>
+                        
+                        <div class="demo-charts-grid">
+                            <div class="chart-container">
+                                <div class="chart-header">
+                                    <h3>用户留存分析</h3>
+                                    <div class="chart-controls">
+                                        <select id="retention-cohort">
+                                            <option value="monthly">月留存</option>
+                                            <option value="weekly">周留存</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <canvas id="retention-chart"></canvas>
+                            </div>
+
+                            <div class="chart-container">
+                                <div class="chart-header">
+                                    <h3>用户活跃度热力图</h3>
+                                    <div class="chart-controls">
+                                        <select id="activity-period">
+                                            <option value="daily">日活跃度</option>
+                                            <option value="hourly">小时活跃度</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <canvas id="activity-heatmap"></canvas>
+                            </div>
+
+                            <div class="chart-container full-width">
+                                <div class="chart-header">
+                                    <h3>RFM客户价值分析</h3>
+                                    <div class="chart-controls">
+                                        <button class="toggle-btn active" data-rfm="scatter">散点图</button>
+                                        <button class="toggle-btn" data-rfm="segment">客户分群</button>
+                                    </div>
+                                </div>
+                                <canvas id="rfm-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 市场分析演示 -->
+                    <div id="market-demo" class="demo-section">
+                        <div class="demo-section-header">
+                            <h2>市场分析 - 交互式演示</h2>
+                            <p>市场趋势和竞争分析的可视化展示</p>
+                        </div>
+                        
+                        <div class="demo-charts-grid">
+                            <div class="chart-container">
+                                <div class="chart-header">
+                                    <h3>市场份额分析</h3>
+                                    <div class="chart-controls">
+                                        <select id="market-segment">
+                                            <option value="product">产品市场</option>
+                                            <option value="region">区域市场</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <canvas id="market-share-chart"></canvas>
+                            </div>
+
+                            <div class="chart-container">
+                                <div class="chart-header">
+                                    <h3>波士顿矩阵分析</h3>
+                                    <div class="chart-controls">
+                                        <select id="boston-data">
+                                            <option value="current">当前产品</option>
+                                            <option value="projected">预测分析</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <canvas id="boston-matrix-chart"></canvas>
+                            </div>
+
+                            <div class="chart-container full-width">
+                                <div class="chart-header">
+                                    <h3>竞争对手分析</h3>
+                                    <div class="chart-controls">
+                                        <button class="toggle-btn active" data-competitor="market">市场表现</button>
+                                        <button class="toggle-btn" data-competitor="financial">财务对比</button>
+                                    </div>
+                                </div>
+                                <canvas id="competitor-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 交互说明 -->
+                    <div class="demo-info">
+                        <div class="info-card">
+                            <h3><i class="fas fa-mouse-pointer"></i> 交互说明</h3>
+                            <ul>
+                                <li>🖱️ <strong>鼠标悬停</strong>：查看详细数据</li>
+                                <li>🎛️ <strong>控件切换</strong>：改变图表视图和数据</li>
+                                <li>📊 <strong>图表联动</strong>：点击图表元素查看关联数据</li>
+                                <li>📱 <strong>响应式设计</strong>：支持移动端操作</li>
+                            </ul>
+                        </div>
+                        <div class="info-card">
+                            <h3><i class="fas fa-lightbulb"></i> 功能特色</h3>
+                            <ul>
+                                <li>⚡ <strong>实时渲染</strong>：基于Chart.js高性能图表库</li>
+                                <li>🎨 <strong>精美样式</strong>：专业级商业图表设计</li>
+                                <li>📈 <strong>多样图表</strong>：支持20+种图表类型</li>
+                                <li>🔄 <strong>动态更新</strong>：支持数据实时更新</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
             </div>
             
             <!-- 文档内容模块 -->
@@ -500,5 +763,6 @@ python -m http.server 8000
     </footer>
 
     <script src="js/script.js"></script>
+    <script src="js/interactive-demo.js"></script>
 </body>
 </html> 

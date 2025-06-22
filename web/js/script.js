@@ -459,11 +459,13 @@ document.addEventListener('DOMContentLoaded', () => {
 // 选项卡功能
 function initializeTabs() {
     const galleryTab = document.getElementById('gallery-tab');
+    const demoTab = document.getElementById('demo-tab');
     const docsTab = document.getElementById('docs-tab');
     const galleryContent = document.getElementById('gallery-content');
+    const demoContent = document.getElementById('demo-content');
     const docsContent = document.getElementById('docs-content');
 
-    if (!galleryTab || !docsTab || !galleryContent || !docsContent) {
+    if (!galleryTab || !demoTab || !docsTab || !galleryContent || !demoContent || !docsContent) {
         console.warn('选项卡元素未找到');
         return;
     }
@@ -473,12 +475,28 @@ function initializeTabs() {
         e.preventDefault();
         
         // 切换选项卡状态
+        document.querySelectorAll('.tab-btn').forEach(tab => tab.classList.remove('active'));
         galleryTab.classList.add('active');
-        docsTab.classList.remove('active');
         
         // 切换内容显示
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
         galleryContent.classList.add('active');
-        docsContent.classList.remove('active');
+        
+        // 滚动到顶部
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    // 交互演示选项卡点击事件
+    demoTab.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        // 切换选项卡状态
+        document.querySelectorAll('.tab-btn').forEach(tab => tab.classList.remove('active'));
+        demoTab.classList.add('active');
+        
+        // 切换内容显示
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+        demoContent.classList.add('active');
         
         // 滚动到顶部
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -489,12 +507,12 @@ function initializeTabs() {
         e.preventDefault();
         
         // 切换选项卡状态
+        document.querySelectorAll('.tab-btn').forEach(tab => tab.classList.remove('active'));
         docsTab.classList.add('active');
-        galleryTab.classList.remove('active');
         
         // 切换内容显示
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
         docsContent.classList.add('active');
-        galleryContent.classList.remove('active');
         
         // 滚动到顶部
         window.scrollTo({ top: 0, behavior: 'smooth' });
