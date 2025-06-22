@@ -170,12 +170,140 @@ class InteractiveDemo {
             activeSection.classList.add('active');
         }
 
+        // 应用主题颜色
+        this.applyTheme(demoType);
+
         this.currentDemo = demoType;
         
         // 渲染对应的图表
         setTimeout(() => {
             this.renderDemoCharts(demoType);
         }, 100);
+    }
+
+    applyTheme(demoType) {
+        const demoContainer = document.querySelector('.demo-container');
+        if (!demoContainer) return;
+
+        // 移除所有主题类
+        demoContainer.classList.remove(
+            'theme-sales', 'theme-financial', 'theme-user', 
+            'theme-market', 'theme-operation', 'theme-product'
+        );
+
+        // 应用新主题
+        const themeClass = `theme-${demoType}`;
+        demoContainer.classList.add(themeClass);
+
+        // 添加平滑过渡动画
+        demoContainer.style.transition = 'all 0.3s ease';
+        
+        // 更新图表颜色
+        setTimeout(() => {
+            this.updateChartColors(demoType);
+        }, 100);
+    }
+
+    updateChartColors(demoType) {
+        // 获取主题颜色
+        const themeColors = this.getThemeColors(demoType);
+        
+        // 重新渲染当前显示的图表以应用新颜色
+        this.renderDemoCharts(demoType);
+    }
+
+    getThemeColors(demoType) {
+        const themes = {
+            sales: {
+                primary: '#2563eb',
+                secondary: '#3b82f6',
+                gradient: ['#2563eb', '#1d4ed8'],
+                light: '#eff6ff'
+            },
+            financial: {
+                primary: '#059669',
+                secondary: '#10b981',
+                gradient: ['#059669', '#047857'],
+                light: '#ecfdf5'
+            },
+            user: {
+                primary: '#7c3aed',
+                secondary: '#8b5cf6',
+                gradient: ['#7c3aed', '#6d28d9'],
+                light: '#f3f4f6'
+            },
+            market: {
+                primary: '#ea580c',
+                secondary: '#fb923c',
+                gradient: ['#ea580c', '#dc2626'],
+                light: '#fff7ed'
+            },
+            operation: {
+                primary: '#dc2626',
+                secondary: '#ef4444',
+                gradient: ['#dc2626', '#b91c1c'],
+                light: '#fef2f2'
+            },
+            product: {
+                primary: '#0891b2',
+                secondary: '#06b6d4',
+                gradient: ['#0891b2', '#0e7490'],
+                light: '#ecfeff'
+            }
+        };
+        
+        return themes[demoType] || themes.sales;
+    }
+
+    generateColorPalette(baseColor, count) {
+        // 生成基于主题色的和谐色彩调色板
+        const colors = [];
+        const hsl = this.hexToHsl(baseColor);
+        
+        for (let i = 0; i < count; i++) {
+            const hue = (hsl.h + (i * 360 / count)) % 360;
+            const saturation = Math.max(0.4, hsl.s - (i * 0.1));
+            const lightness = Math.min(0.8, hsl.l + (i * 0.05));
+            colors.push(this.hslToHex(hue, saturation, lightness));
+        }
+        
+        return colors;
+    }
+
+    hexToHsl(hex) {
+        const r = parseInt(hex.slice(1, 3), 16) / 255;
+        const g = parseInt(hex.slice(3, 5), 16) / 255;
+        const b = parseInt(hex.slice(5, 7), 16) / 255;
+
+        const max = Math.max(r, g, b);
+        const min = Math.min(r, g, b);
+        let h, s, l = (max + min) / 2;
+
+        if (max === min) {
+            h = s = 0; // achromatic
+        } else {
+            const d = max - min;
+            s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+            switch (max) {
+                case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                case g: h = (b - r) / d + 2; break;
+                case b: h = (r - g) / d + 4; break;
+            }
+            h /= 6;
+        }
+
+        return { h: h * 360, s, l };
+    }
+
+    hslToHex(h, s, l) {
+        h /= 360;
+        const a = s * Math.min(l, 1 - l);
+        const f = n => {
+            const k = (n + h / (1/12)) % 12;
+            const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+            return Math.round(255 * color).toString(16).padStart(2, '0');
+        };
+        return `#${f(0)}${f(8)}${f(4)}`;
     }
 
     toggleActiveButton(clickedBtn) {
@@ -282,6 +410,9 @@ class InteractiveDemo {
             return;
         }
 
+        // 应用默认主题
+        this.applyTheme(this.currentDemo);
+
         if (this.currentDemo === 'sales') {
             this.renderSalesCharts();
         }
@@ -327,6 +458,7 @@ class InteractiveDemo {
         }
 
         const data = this.salesData[year];
+        const themeColors = this.getThemeColors(this.currentDemo);
         
         this.charts.salesTrend = new Chart(ctx, {
             type: 'line',
@@ -335,12 +467,12 @@ class InteractiveDemo {
                 datasets: [{
                     label: `${year}年销售额(万元)`,
                     data: data.sales,
-                    borderColor: '#4A90E2',
-                    backgroundColor: 'rgba(74, 144, 226, 0.1)',
+                    borderColor: themeColors.primary,
+                    backgroundColor: themeColors.primary + '20',
                     borderWidth: 3,
                     fill: true,
                     tension: 0.4,
-                    pointBackgroundColor: '#4A90E2',
+                    pointBackgroundColor: themeColors.primary,
                     pointBorderColor: '#fff',
                     pointBorderWidth: 2,
                     pointRadius: 6,
@@ -362,7 +494,7 @@ class InteractiveDemo {
                         backgroundColor: 'rgba(0,0,0,0.8)',
                         titleColor: '#fff',
                         bodyColor: '#fff',
-                        borderColor: '#4A90E2',
+                        borderColor: themeColors.primary,
                         borderWidth: 1
                     }
                 },
@@ -396,7 +528,8 @@ class InteractiveDemo {
             this.charts.category.destroy();
         }
 
-        const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#DDA0DD'];
+        const themeColors = this.getThemeColors(this.currentDemo);
+        const colors = this.generateColorPalette(themeColors.primary, 6);
 
         this.charts.category = new Chart(ctx, {
             type: type,
@@ -447,6 +580,7 @@ class InteractiveDemo {
 
         const chartType = 'bar';
         const indexAxis = viewType === 'horizontal' ? 'y' : 'x';
+        const themeColors = this.getThemeColors(this.currentDemo);
 
         this.charts.region = new Chart(ctx, {
             type: chartType,
@@ -455,8 +589,8 @@ class InteractiveDemo {
                 datasets: [{
                     label: '销售额占比(%)',
                     data: this.regionData.values,
-                    backgroundColor: 'rgba(74, 144, 226, 0.8)',
-                    borderColor: '#4A90E2',
+                    backgroundColor: themeColors.primary + 'CC',
+                    borderColor: themeColors.primary,
                     borderWidth: 1,
                     borderRadius: 4
                 }]

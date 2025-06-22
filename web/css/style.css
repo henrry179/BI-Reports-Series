@@ -20,6 +20,62 @@
     --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
     --border-radius: 8px;
     --transition: all 0.3s ease;
+    
+    /* 动态主题色彩变量 */
+    --theme-primary: #2563eb;
+    --theme-secondary: #3b82f6;
+    --theme-light: #eff6ff;
+    --theme-gradient: linear-gradient(135deg, #2563eb, #1d4ed8);
+}
+
+/* ===== 分析模块主题色彩 ===== */
+
+/* 销售数据分析主题 - 蓝色系 */
+.theme-sales {
+    --theme-primary: #2563eb;
+    --theme-secondary: #3b82f6;
+    --theme-light: #eff6ff;
+    --theme-gradient: linear-gradient(135deg, #2563eb, #1d4ed8);
+}
+
+/* 财务分析主题 - 绿色系 */
+.theme-financial {
+    --theme-primary: #059669;
+    --theme-secondary: #10b981;
+    --theme-light: #ecfdf5;
+    --theme-gradient: linear-gradient(135deg, #059669, #047857);
+}
+
+/* 用户分析主题 - 紫色系 */
+.theme-user {
+    --theme-primary: #7c3aed;
+    --theme-secondary: #8b5cf6;
+    --theme-light: #f3f4f6;
+    --theme-gradient: linear-gradient(135deg, #7c3aed, #6d28d9);
+}
+
+/* 市场分析主题 - 橙色系 */
+.theme-market {
+    --theme-primary: #ea580c;
+    --theme-secondary: #fb923c;
+    --theme-light: #fff7ed;
+    --theme-gradient: linear-gradient(135deg, #ea580c, #dc2626);
+}
+
+/* 运营分析主题 - 红色系 */
+.theme-operation {
+    --theme-primary: #dc2626;
+    --theme-secondary: #ef4444;
+    --theme-light: #fef2f2;
+    --theme-gradient: linear-gradient(135deg, #dc2626, #b91c1c);
+}
+
+/* 产品分析主题 - 青色系 */
+.theme-product {
+    --theme-primary: #0891b2;
+    --theme-secondary: #06b6d4;
+    --theme-light: #ecfeff;
+    --theme-gradient: linear-gradient(135deg, #0891b2, #0e7490);
 }
 
 /* 基础样式 */
@@ -1165,6 +1221,28 @@ body {
     max-width: 1400px;
     margin: 0 auto;
     padding: 2rem;
+    border-radius: 20px;
+    transition: all 0.5s ease;
+}
+
+/* 主题背景渐变 */
+.demo-container.theme-sales { 
+    background: linear-gradient(135deg, #eff6ff 0%, #f8fafc 100%); 
+}
+.demo-container.theme-financial { 
+    background: linear-gradient(135deg, #ecfdf5 0%, #f8fafc 100%); 
+}
+.demo-container.theme-user { 
+    background: linear-gradient(135deg, #f3f4f6 0%, #f8fafc 100%); 
+}
+.demo-container.theme-market { 
+    background: linear-gradient(135deg, #fff7ed 0%, #f8fafc 100%); 
+}
+.demo-container.theme-operation { 
+    background: linear-gradient(135deg, #fef2f2 0%, #f8fafc 100%); 
+}
+.demo-container.theme-product { 
+    background: linear-gradient(135deg, #ecfeff 0%, #f8fafc 100%); 
 }
 
 .demo-header {
@@ -1175,12 +1253,12 @@ body {
 .demo-header h1 {
     font-size: 2.5rem;
     font-weight: 700;
-    color: var(--primary-color);
+    color: var(--theme-primary);
     margin-bottom: 1rem;
 }
 
 .demo-header h1 i {
-    color: var(--accent-color);
+    color: var(--theme-secondary);
     margin-right: 1rem;
 }
 
@@ -1219,22 +1297,45 @@ body {
 }
 
 .demo-nav-btn:hover {
-    border-color: var(--accent-color);
-    color: var(--accent-color);
+    border-color: var(--theme-primary);
+    color: var(--theme-primary);
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(0,0,0,0.1);
 }
 
 .demo-nav-btn.active {
-    background: var(--accent-color);
-    border-color: var(--accent-color);
+    background: var(--theme-gradient);
+    border-color: var(--theme-primary);
     color: white;
-    box-shadow: 0 8px 25px rgba(74, 144, 226, 0.3);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
 }
 
 .demo-nav-btn i {
     font-size: 1.1rem;
 }
+
+/* 按钮颜色指示器 */
+.btn-color-indicator {
+    width: 4px;
+    height: 20px;
+    border-radius: 2px;
+    margin-right: 0.5rem;
+    opacity: 0.7;
+    transition: all 0.3s ease;
+}
+
+.demo-nav-btn:hover .btn-color-indicator,
+.demo-nav-btn.active .btn-color-indicator {
+    opacity: 1;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
+}
+
+.sales-color { background: linear-gradient(135deg, #2563eb, #1d4ed8); }
+.financial-color { background: linear-gradient(135deg, #059669, #047857); }
+.user-color { background: linear-gradient(135deg, #7c3aed, #6d28d9); }
+.market-color { background: linear-gradient(135deg, #ea580c, #dc2626); }
+.operation-color { background: linear-gradient(135deg, #dc2626, #b91c1c); }
+.product-color { background: linear-gradient(135deg, #0891b2, #0e7490); }
 
 /* 演示区域 */
 .demo-section {
@@ -1254,7 +1355,7 @@ body {
 .demo-section-header h2 {
     font-size: 2rem;
     font-weight: 600;
-    color: var(--primary-color);
+    color: var(--theme-primary);
     margin-bottom: 0.5rem;
 }
 
@@ -1278,6 +1379,7 @@ body {
     border-radius: 16px;
     box-shadow: 0 4px 20px rgba(0,0,0,0.08);
     border: 1px solid var(--border-color);
+    border-left: 4px solid var(--theme-primary);
     transition: all 0.3s ease;
 }
 
@@ -1303,7 +1405,7 @@ body {
 .chart-header h3 {
     font-size: 1.2rem;
     font-weight: 600;
-    color: var(--primary-color);
+    color: var(--theme-primary);
     margin: 0;
 }
 
@@ -1319,7 +1421,7 @@ body {
     border: 1px solid var(--border-color);
     border-radius: 8px;
     background: white;
-    color: var(--primary-color);
+    color: var(--theme-primary);
     font-size: 0.9rem;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -1327,9 +1429,9 @@ body {
 
 .chart-controls select:hover,
 .chart-controls select:focus {
-    border-color: var(--accent-color);
+    border-color: var(--theme-primary);
     outline: none;
-    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+    box-shadow: 0 0 0 3px var(--theme-light);
 }
 
 .toggle-btn {
@@ -1345,14 +1447,14 @@ body {
 }
 
 .toggle-btn:hover {
-    background: var(--accent-color);
+    background: var(--theme-primary);
     color: white;
 }
 
 .toggle-btn.active {
-    background: var(--accent-color);
+    background: var(--theme-gradient);
     color: white;
-    box-shadow: 0 2px 8px rgba(74, 144, 226, 0.3);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 /* 图表画布 */
@@ -1375,7 +1477,7 @@ body {
 }
 
 .info-card {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: var(--theme-gradient);
     color: white;
     padding: 2rem;
     border-radius: 16px;
