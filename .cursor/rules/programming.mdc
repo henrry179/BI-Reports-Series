@@ -3,4 +3,93 @@ description: 开发进度时间表更新
 globs: 
 alwaysApply: false
 ---
-## 要求每次开发进行优化更新时，将开发进度的日期格式调整为实时的日期和时间，具体开发进度的日期展示示例：2025-06-22 09：58：58 
+# Cursor 开发流程规则 (v2.1 - 音频提醒机制增强版)
+
+## 🕐 实时时间记录原则
+- **每次开发更新必须使用当前实时日期和时间**，格式严格为 `YYYY-MM-DD HH:MM:SS`
+- **时间获取方式**: 使用当前系统的实时时间，不得使用预设或估算时间
+- **记录内容包括**: 优化的模块名称、具体改进点、技术难点、性能指标
+
+## 📋 核心开发流程
+
+### 1. 实时进度记录要求 ⏰
+- 每次优化任何模块功能，都必须将优化进度详细更新到 `README.md` 文档中
+- 记录格式: 严格使用 `YYYY-MM-DD HH:MM:SS` 格式（24小时制）
+
+### 2. 文档同步推送流程 🚀
+- 每次将优化进度更新到 `README.md` 后，必须立即推送到 GitHub 仓库
+- 标准操作流程:
+  ```bash
+  git add .
+  git commit -m "更新README，记录[模块名称]优化进度 - $(date '+%Y-%m-%d %H:%M:%S')"
+  git push
+  ```
+- 提交信息规范: 必须包含优化的模块名称和当前时间戳
+
+### 3. 持续迭代检查机制 🔄
+- 每次推送到 GitHub 后，需重新检查项目的其他文件和模块功能
+- 审查 `README.md` 的"开发进度"板块，明确剩余开发任务优先级
+- 检查代码目录和模块，识别未完成、可优化的部分
+
+### 4. 任务完成音频提醒机制 🔔
+- **每次自动完成进度任务后，必须使用音频提醒通知用户任务已更新完成**
+- **音频提醒触发条件**:
+  - README.md开发进度更新完成后
+  - Git推送到远程仓库成功后
+  - 关键模块功能优化完成后
+  - 测试验证通过后
+  - 文档同步更新完成后
+
+- **跨平台音频播放实现**:
+  ```bash
+  # macOS系统 - 使用系统音效
+  afplay /System/Library/Sounds/Glass.aiff
+  say "任务已完成，请回来确认检查"
+  
+  # Linux系统 - 使用paplay或aplay
+  paplay /usr/share/sounds/alsa/Front_Right.wav 2>/dev/null
+  espeak "Task completed, please come back to check" 2>/dev/null
+  
+  # Windows系统 - 使用PowerShell
+  powershell -Command "[console]::beep(800,500); Add-Type -AssemblyName System.Speech; (New-Object System.Speech.Synthesis.SpeechSynthesizer).Speak('Task completed')"
+  ```
+
+- **智能提醒策略**:
+  - 工作时间(9:00-18:00): 使用温和提示音
+  - 非工作时间: 使用更明显的提醒音
+  - 连续任务完成时延迟5秒再播放，避免频繁打扰
+  - 支持用户自定义提醒频率和方式
+
+## 📋 开发检查清单
+在每次开发迭代后，请确认以下检查项：
+- [ ] 使用实时系统时间记录开发进度（格式: YYYY-MM-DD HH:MM:SS）
+- [ ] 在README.md中详细记录优化内容和量化指标
+- [ ] 执行完整的git提交流程（add → commit → push）
+- [ ] 提交信息包含模块名称和时间戳
+- [ ] 验证远程仓库已成功更新
+- [ ] **播放音频提醒通知任务完成**
+- [ ] 检查其他模块是否需要相应调整
+- [ ] 确认代码质量和测试覆盖率
+- [ ] 更新相关文档和API说明
+- [ ] 规划下一个开发目标和优先级
+- [ ] 确认音频提醒系统正常工作
+
+## 🛠 自动化脚本建议
+```bash
+#!/bin/bash
+# 开发进度更新脚本
+CURRENT_TIME=$(date '+%Y-%m-%d %H:%M:%S')
+git add .
+git commit -m "开发进度更新 - $CURRENT_TIME"
+git push
+
+# 音频提醒
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    afplay /System/Library/Sounds/Glass.aiff
+    say "开发进度更新完成，请回来确认检查"
+fi
+```
+
+---
+**最后更新时间**: 2025-06-22 10:52:59  
+**规则版本**: v2.1 - 音频提醒机制增强版 
