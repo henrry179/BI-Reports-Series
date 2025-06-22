@@ -497,21 +497,22 @@ class ImageGallery {
         const folderGrid = document.createElement('div');
         folderGrid.className = 'folder-grid';
         
-        // 按数字序号排序文件夹
+        // 按图片数量排序文件夹（从多到少）
         const sortedFolderNames = Object.keys(folderLevel).sort((a, b) => {
-            const getNumericPrefix = (folderName) => {
-                const match = folderName.match(/^(\d+)-/);
-                return match ? parseInt(match[1]) : 999;
-            };
+            const folderInfoA = folderLevel[a];
+            const folderInfoB = folderLevel[b];
             
-            const numA = getNumericPrefix(a);
-            const numB = getNumericPrefix(b);
+            // 计算每个文件夹的总图片数量（包括子文件夹）
+            const totalImagesA = folderInfoA.images.length + this.countImagesInSubfolders(folderInfoA);
+            const totalImagesB = folderInfoB.images.length + this.countImagesInSubfolders(folderInfoB);
             
-            if (numA === numB) {
-                return a.localeCompare(b);
+            // 按图片数量从多到少排序
+            if (totalImagesA !== totalImagesB) {
+                return totalImagesB - totalImagesA;
             }
             
-            return numA - numB;
+            // 如果图片数量相同，则按文件夹名称排序
+            return a.localeCompare(b);
         });
         
         sortedFolderNames.forEach(folderName => {
