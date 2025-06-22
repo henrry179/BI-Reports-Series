@@ -504,22 +504,23 @@ class ImageGallery {
         const folderGrid = document.createElement('div');
         folderGrid.className = 'folder-grid';
         
-        // 按图片数量排序文件夹（从多到少）
+        // 按数字序号排序文件夹（01, 02, 03...）
         const sortedFolderNames = Object.keys(folderLevel).sort((a, b) => {
-            const folderInfoA = folderLevel[a];
-            const folderInfoB = folderLevel[b];
+            // 提取文件夹名开头的数字序号
+            const getNumericPrefix = (folderName) => {
+                const match = folderName.match(/^(\d+)-/);
+                return match ? parseInt(match[1]) : 999; // 没有数字前缀的排在最后
+            };
             
-            // 计算每个文件夹的总图片数量（包括子文件夹）
-            const totalImagesA = folderInfoA.images.length + this.countImagesInSubfolders(folderInfoA);
-            const totalImagesB = folderInfoB.images.length + this.countImagesInSubfolders(folderInfoB);
+            const numA = getNumericPrefix(a);
+            const numB = getNumericPrefix(b);
             
-            // 按图片数量从多到少排序
-            if (totalImagesA !== totalImagesB) {
-                return totalImagesB - totalImagesA;
+            // 如果数字相同，则按原来的字符串排序
+            if (numA === numB) {
+                return a.localeCompare(b);
             }
             
-            // 如果图片数量相同，则按文件夹名称排序
-            return a.localeCompare(b);
+            return numA - numB;
         });
         
         sortedFolderNames.forEach(folderName => {
