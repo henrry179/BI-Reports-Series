@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BI Reports Series - 可视化图表展示</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- 顶部导航 -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-chart-line"></i>
+                    <h1>BI Reports Series</h1>
+                    <span class="subtitle">可视化图表展示平台</span>
+                </div>
+                <nav class="nav">
+                    <a href="https://github.com/henrry179/BI-Reports-Series" target="_blank" class="nav-link">
+                        <i class="fab fa-github"></i> GitHub
+                    </a>
+                    <a href="../README.md" class="nav-link">
+                        <i class="fas fa-book"></i> 文档
+                    </a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主要内容 -->
+    <main class="main">
+        <div class="container">
+            <!-- 统计信息卡片 -->
+            <section class="stats-section">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-images"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="total-images">0</h3>
+                            <p>可视化图表</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-folder"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="total-folders">0</h3>
+                            <p>项目案例</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-tags"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="total-categories">0</h3>
+                            <p>图表类型</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-play"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="gif-count">0</h3>
+                            <p>动态演示</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 搜索和筛选 -->
+            <section class="controls-section">
+                <div class="controls">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="search-input" placeholder="搜索项目名称或图表类型...">
+                        <button id="clear-search" class="clear-btn">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="filters">
+                        <select id="folder-filter" class="filter-select">
+                            <option value="">所有项目</option>
+                        </select>
+                        
+                        <select id="category-filter" class="filter-select">
+                            <option value="">所有类型</option>
+                        </select>
+                        
+                        <select id="sort-select" class="filter-select">
+                            <option value="name">按名称排序</option>
+                            <option value="folder">按项目排序</option>
+                            <option value="size">按大小排序</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 项目展示区域 -->
+            <section class="gallery-section">
+                <div class="view-controls">
+                    <div class="view-toggle">
+                        <button id="grid-view" class="view-btn active">
+                            <i class="fas fa-th"></i> 网格视图
+                        </button>
+                        <button id="list-view" class="view-btn">
+                            <i class="fas fa-list"></i> 列表视图
+                        </button>
+                        <button id="folder-view" class="view-btn">
+                            <i class="fas fa-folder-open"></i> 文件夹视图
+                        </button>
+                    </div>
+                    
+                    <div class="results-info">
+                        <span id="results-count">显示 0 张图表</span>
+                    </div>
+                </div>
+
+                <!-- 图片展示容器 -->
+                <div id="gallery-container" class="gallery-container">
+                    <div class="loading">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>正在加载图表...</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- 图片预览模态框 -->
+    <div id="image-modal" class="modal">
+        <div class="modal-overlay">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="modal-title">图表预览</h3>
+                    <button id="close-modal" class="close-btn">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <img id="modal-image" src="" alt="">
+                    <div class="image-info">
+                        <div class="info-item">
+                            <strong>项目:</strong> <span id="info-folder"></span>
+                        </div>
+                        <div class="info-item">
+                            <strong>类型:</strong> <span id="info-category"></span>
+                        </div>
+                        <div class="info-item">
+                            <strong>文件名:</strong> <span id="info-filename"></span>
+                        </div>
+                        <div class="info-item">
+                            <strong>大小:</strong> <span id="info-size"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="download-btn" class="btn btn-primary">
+                        <i class="fas fa-download"></i> 下载图片
+                    </button>
+                    <button id="fullscreen-btn" class="btn btn-secondary">
+                        <i class="fas fa-expand"></i> 全屏查看
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 返回顶部按钮 -->
+    <button id="back-to-top" class="back-to-top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>关于项目</h4>
+                    <p>BI Reports Series 是一个综合性的商业智能报告系列项目，包含多个实际的数据可视化案例和系统的数据分析模型合集。</p>
+                </div>
+                <div class="footer-section">
+                    <h4>技术栈</h4>
+                    <ul>
+                        <li>Power BI</li>
+                        <li>FineBI</li>
+                        <li>Tableau</li>
+                        <li>Python</li>
+                        <li>R</li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>联系方式</h4>
+                    <p>
+                        <a href="https://github.com/henrry179/BI-Reports-Series" target="_blank">
+                            <i class="fab fa-github"></i> GitHub
+                        </a>
+                    </p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 BI Reports Series. 开源项目，MIT 许可证.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/script.js"></script>
+</body>
+</html> 
