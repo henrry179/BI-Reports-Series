@@ -76,6 +76,7 @@ class ImageGallery {
                     currentLevel[folderName] = {
                         name: folderName,
                         cleanName: this.getCleanFolderName(folderName),
+                        formattedName: this.getFormattedFolderName(folderName),
                         children: {},
                         images: [],
                         path: pathParts.slice(0, i + 1).join('/'),
@@ -92,6 +93,12 @@ class ImageGallery {
     getCleanFolderName(folderName) {
         // 移除数字前缀并美化文件夹名称
         return folderName.replace(/^\d+-/, '').replace(/[-_]/g, ' ');
+    }
+    
+    getFormattedFolderName(folderName) {
+        // 保持数字前缀并美化文件夹名称显示格式
+        // 例如: "01-数据可视化报告-销售数据分析" 显示为 "01-数据可视化报告-销售数据分析"
+        return folderName.replace(/[-_]/g, '-').replace(/--+/g, '-');
     }
     
     setupEventListeners() {
@@ -482,7 +489,7 @@ class ImageGallery {
             
             const link = document.createElement('span');
             link.className = 'breadcrumb-item breadcrumb-link';
-            link.textContent = this.getCleanFolderName(folderName);
+            link.textContent = this.getFormattedFolderName(folderName);
             link.addEventListener('click', () => {
                 this.currentFolderPath = this.currentFolderPath.slice(0, index + 1);
                 this.renderHierarchicalFolderView();
@@ -543,7 +550,7 @@ class ImageGallery {
                         <i class="fas fa-folder ${hasSubfolders ? 'has-subfolders' : ''}"></i>
                     </div>
                     <div class="folder-info">
-                        <div class="folder-title">${folderInfo.cleanName}</div>
+                        <div class="folder-title">${folderInfo.formattedName}</div>
                         <div class="folder-stats">
                             <span class="image-count">${totalAllImages} 张图片</span>
                             ${hasSubfolders ? `<span class="subfolder-count">${Object.keys(folderInfo.children).length} 个子文件夹</span>` : ''}
