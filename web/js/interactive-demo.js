@@ -301,6 +301,12 @@ class InteractiveDemo {
             case 'market':
                 this.renderMarketCharts();
                 break;
+            case 'operation':
+                this.renderOperationCharts();
+                break;
+            case 'product':
+                this.renderProductCharts();
+                break;
         }
     }
 
@@ -1072,6 +1078,623 @@ class InteractiveDemo {
     updateCompetitorChart(competitorType) {
         this.renderCompetitorChart(competitorType);
     }
+
+    // ============ 新增运营分析模块 ============
+    renderOperationCharts() {
+        this.renderFunnelChart('conversion');
+        this.renderAreaChart('comparison');
+        this.renderPolarChart('performance');
+        this.renderGaugeChart('kpi');
+    }
+
+    renderFunnelChart(analysisType) {
+        const ctx = document.getElementById('funnel-chart');
+        if (!ctx) return;
+
+        if (this.charts.funnel) {
+            this.charts.funnel.destroy();
+        }
+
+        let data, labels;
+        if (analysisType === 'conversion') {
+            labels = ['访问量', '注册量', '购买量', '付费量', '复购量'];
+            data = [10000, 3000, 1200, 800, 300];
+        } else {
+            labels = ['展示', '点击', '加购', '下单', '支付'];
+            data = [50000, 5000, 2000, 1000, 800];
+        }
+
+        // 使用条形图模拟漏斗图
+        this.charts.funnel = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: '用户数量',
+                    data: data,
+                    backgroundColor: [
+                        'rgba(255, 107, 107, 0.8)',
+                        'rgba(78, 205, 196, 0.8)',
+                        'rgba(69, 183, 209, 0.8)',
+                        'rgba(150, 206, 180, 0.8)',
+                        'rgba(255, 234, 167, 0.8)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 107, 107, 1)',
+                        'rgba(78, 205, 196, 1)',
+                        'rgba(69, 183, 209, 1)',
+                        'rgba(150, 206, 180, 1)',
+                        'rgba(255, 234, 167, 1)'
+                    ],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            afterLabel: function(context) {
+                                if (context.dataIndex > 0) {
+                                    const current = context.parsed.x;
+                                    const previous = data[context.dataIndex - 1];
+                                    const rate = ((current / previous) * 100).toFixed(2);
+                                    return `转化率: ${rate}%`;
+                                }
+                                return null;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+
+    renderAreaChart(chartType) {
+        const ctx = document.getElementById('area-chart');
+        if (!ctx) return;
+
+        if (this.charts.area) {
+            this.charts.area.destroy();
+        }
+
+        let datasets;
+        const months = ['1月', '2月', '3月', '4月', '5月', '6月'];
+
+        if (chartType === 'comparison') {
+            datasets = [
+                {
+                    label: '今年',
+                    data: [120, 190, 300, 500, 200, 300],
+                    borderColor: 'rgba(74, 144, 226, 1)',
+                    backgroundColor: 'rgba(74, 144, 226, 0.3)',
+                    fill: true
+                },
+                {
+                    label: '去年',
+                    data: [80, 150, 200, 350, 180, 250],
+                    borderColor: 'rgba(255, 107, 107, 1)',
+                    backgroundColor: 'rgba(255, 107, 107, 0.3)',
+                    fill: true
+                }
+            ];
+        } else {
+            datasets = [
+                {
+                    label: '移动端',
+                    data: [80, 120, 180, 300, 120, 180],
+                    borderColor: 'rgba(78, 205, 196, 1)',
+                    backgroundColor: 'rgba(78, 205, 196, 0.3)',
+                    fill: true
+                },
+                {
+                    label: 'PC端',
+                    data: [40, 70, 120, 200, 80, 120],
+                    borderColor: 'rgba(150, 206, 180, 1)',
+                    backgroundColor: 'rgba(150, 206, 180, 0.3)',
+                    fill: true
+                }
+            ];
+        }
+
+        this.charts.area = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: months,
+                datasets: datasets
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        stacked: true
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top'
+                    }
+                }
+            }
+        });
+    }
+
+    renderPolarChart(dataType) {
+        const ctx = document.getElementById('polar-chart');
+        if (!ctx) return;
+
+        if (this.charts.polar) {
+            this.charts.polar.destroy();
+        }
+
+        let data, labels;
+        if (dataType === 'performance') {
+            labels = ['销售业绩', '客户满意度', '团队协作', '创新能力', '执行效率', '市场响应'];
+            data = [85, 78, 92, 68, 85, 75];
+        } else {
+            labels = ['品牌知名度', '产品质量', '价格优势', '服务水平', '渠道覆盖', '用户体验'];
+            data = [88, 95, 72, 89, 76, 84];
+        }
+
+        this.charts.polar = new Chart(ctx, {
+            type: 'polarArea',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: data,
+                    backgroundColor: [
+                        'rgba(255, 107, 107, 0.7)',
+                        'rgba(78, 205, 196, 0.7)',
+                        'rgba(69, 183, 209, 0.7)',
+                        'rgba(150, 206, 180, 0.7)',
+                        'rgba(255, 234, 167, 0.7)',
+                        'rgba(221, 160, 221, 0.7)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 107, 107, 1)',
+                        'rgba(78, 205, 196, 1)',
+                        'rgba(69, 183, 209, 1)',
+                        'rgba(150, 206, 180, 1)',
+                        'rgba(255, 234, 167, 1)',
+                        'rgba(221, 160, 221, 1)'
+                    ],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right'
+                    }
+                },
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        max: 100
+                    }
+                }
+            }
+        });
+    }
+
+    renderGaugeChart(kpiType) {
+        const ctx = document.getElementById('gauge-chart');
+        if (!ctx) return;
+
+        if (this.charts.gauge) {
+            this.charts.gauge.destroy();
+        }
+
+        let value, target, label;
+        if (kpiType === 'kpi') {
+            value = 75;
+            target = 100;
+            label = 'KPI完成度';
+        } else {
+            value = 68;
+            target = 80;
+            label = '客户满意度';
+        }
+
+        // 使用环形图模拟仪表盘
+        this.charts.gauge = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['已完成', '未完成'],
+                datasets: [{
+                    data: [value, target - value],
+                    backgroundColor: [
+                        value >= target * 0.8 ? '#50C878' : value >= target * 0.6 ? '#FFA500' : '#FF6B6B',
+                        '#E0E0E0'
+                    ],
+                    borderWidth: 0,
+                    cutout: '75%'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        enabled: false
+                    }
+                },
+                rotation: -90,
+                circumference: 180
+            },
+            plugins: [{
+                id: 'gaugeText',
+                beforeDraw: function(chart) {
+                    const ctx = chart.ctx;
+                    ctx.save();
+                    ctx.font = '24px Arial';
+                    ctx.fillStyle = '#333';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(`${value}%`, chart.width / 2, chart.height / 2 + 10);
+                    ctx.font = '14px Arial';
+                    ctx.fillText(label, chart.width / 2, chart.height / 2 + 35);
+                    ctx.restore();
+                }
+            }]
+        });
+    }
+
+    // ============ 新增产品分析模块 ============
+    renderProductCharts() {
+        this.renderSankeyChart('userflow');
+        this.renderTreeChart('hierarchy');
+        this.renderHeatMapChart('correlation');
+        this.renderLiquidChart('progress');
+    }
+
+    renderSankeyChart(flowType) {
+        const ctx = document.getElementById('sankey-chart');
+        if (!ctx) return;
+
+        if (this.charts.sankey) {
+            this.charts.sankey.destroy();
+        }
+
+        // 使用堆叠条形图模拟桑基图
+        let data, labels;
+        if (flowType === 'userflow') {
+            labels = ['首页', '产品页', '购物车', '结算页', '支付完成'];
+            data = [
+                { label: '进入', data: [100, 60, 35, 25, 20], backgroundColor: 'rgba(74, 144, 226, 0.8)' },
+                { label: '流失', data: [0, 40, 25, 10, 5], backgroundColor: 'rgba(255, 107, 107, 0.8)' }
+            ];
+        } else {
+            labels = ['获取', '激活', '留存', '推荐', '收益'];
+            data = [
+                { label: '成功', data: [100, 45, 30, 15, 12], backgroundColor: 'rgba(80, 200, 120, 0.8)' },
+                { label: '流失', data: [0, 55, 15, 15, 3], backgroundColor: 'rgba(255, 165, 0, 0.8)' }
+            ];
+        }
+
+        this.charts.sankey = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: data
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top'
+                    }
+                },
+                scales: {
+                    x: {
+                        stacked: true
+                    },
+                    y: {
+                        stacked: true,
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+
+    renderTreeChart(dataType) {
+        const ctx = document.getElementById('tree-chart');
+        if (!ctx) return;
+
+        if (this.charts.tree) {
+            this.charts.tree.destroy();
+        }
+
+        // 使用嵌套环形图模拟树状图
+        let innerData, outerData, innerLabels, outerLabels;
+        
+        if (dataType === 'hierarchy') {
+            innerLabels = ['电子产品', '服装', '家居', '食品'];
+            innerData = [40, 30, 20, 10];
+            outerLabels = ['手机', '电脑', '男装', '女装', '家具', '装饰', '零食', '饮料'];
+            outerData = [25, 15, 18, 12, 12, 8, 6, 4];
+        } else {
+            innerLabels = ['华东', '华南', '华北', '其他'];
+            innerData = [35, 25, 25, 15];
+            outerLabels = ['上海', '江苏', '广州', '深圳', '北京', '天津', '西安', '成都'];
+            outerData = [20, 15, 15, 10, 15, 10, 8, 7];
+        }
+
+        this.charts.tree = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: outerLabels,
+                datasets: [
+                    {
+                        label: '分类',
+                        data: innerData,
+                        backgroundColor: ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4'],
+                        borderWidth: 2,
+                        weight: 1
+                    },
+                    {
+                        label: '详细',
+                        data: outerData,
+                        backgroundColor: [
+                            '#FF8E8E', '#FFB1B1',
+                            '#71D0D0', '#94D7D7',
+                            '#68C4D4', '#8BD1DD',
+                            '#B9D6BE', '#CCDDCF'
+                        ],
+                        borderWidth: 2,
+                        weight: 2
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right'
+                    }
+                }
+            }
+        });
+    }
+
+    renderHeatMapChart(analysisType) {
+        const ctx = document.getElementById('heatmap-chart');
+        if (!ctx) return;
+
+        if (this.charts.heatmap) {
+            this.charts.heatmap.destroy();
+        }
+
+        // 使用散点图模拟热力图
+        let data, title;
+        if (analysisType === 'correlation') {
+            data = [];
+            const labels = ['价格', '质量', '服务', '品牌', '便利性'];
+            for (let i = 0; i < 5; i++) {
+                for (let j = 0; j < 5; j++) {
+                    data.push({
+                        x: i,
+                        y: j,
+                        v: Math.random() * 100
+                    });
+                }
+            }
+            title = '产品属性相关性分析';
+        } else {
+            data = [];
+            for (let i = 0; i < 7; i++) {
+                for (let j = 0; j < 24; j++) {
+                    data.push({
+                        x: j,
+                        y: i,
+                        v: Math.random() * 100
+                    });
+                }
+            }
+            title = '用户活跃度热力图';
+        }
+
+        this.charts.heatmap = new Chart(ctx, {
+            type: 'scatter',
+            data: {
+                datasets: [{
+                    label: title,
+                    data: data.map(point => ({
+                        x: point.x,
+                        y: point.y,
+                        r: point.v / 10
+                    })),
+                    backgroundColor: function(context) {
+                        const value = data[context.dataIndex].v;
+                        const opacity = value / 100;
+                        return `rgba(74, 144, 226, ${opacity})`;
+                    },
+                    borderColor: 'rgba(74, 144, 226, 0.8)',
+                    pointRadius: function(context) {
+                        return Math.max(3, data[context.dataIndex].v / 10);
+                    }
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const point = data[context.dataIndex];
+                                return `强度: ${point.v.toFixed(1)}`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        type: 'linear',
+                        position: 'bottom',
+                        title: {
+                            display: true,
+                            text: analysisType === 'correlation' ? '产品属性' : '小时'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: analysisType === 'correlation' ? '产品属性' : '星期'
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    renderLiquidChart(progressType) {
+        const ctx = document.getElementById('liquid-chart');
+        if (!ctx) return;
+
+        if (this.charts.liquid) {
+            this.charts.liquid.destroy();
+        }
+
+        let percentage, label, color;
+        if (progressType === 'progress') {
+            percentage = 75;
+            label = '项目完成度';
+            color = '#4ECDC4';
+        } else {
+            percentage = 88;
+            label = '目标达成率';
+            color = '#50C878';
+        }
+
+        // 使用环形图模拟水球图
+        this.charts.liquid = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['已完成', '未完成'],
+                datasets: [{
+                    data: [percentage, 100 - percentage],
+                    backgroundColor: [color, '#E0E0E0'],
+                    borderWidth: 0,
+                    cutout: '60%'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        enabled: false
+                    }
+                }
+            },
+            plugins: [{
+                id: 'liquidText',
+                beforeDraw: function(chart) {
+                    const ctx = chart.ctx;
+                    ctx.save();
+                    ctx.font = 'bold 28px Arial';
+                    ctx.fillStyle = color;
+                    ctx.textAlign = 'center';
+                    ctx.fillText(`${percentage}%`, chart.width / 2, chart.height / 2);
+                    ctx.font = '14px Arial';
+                    ctx.fillStyle = '#666';
+                    ctx.fillText(label, chart.width / 2, chart.height / 2 + 25);
+                    ctx.restore();
+                }
+            }]
+        });
+    }
+
+    // ============ 更新事件监听器 ============
+    setupAdditionalControls() {
+        // 运营分析控件
+        const funnelType = document.getElementById('funnel-type');
+        if (funnelType) {
+            funnelType.addEventListener('change', (e) => {
+                this.renderFunnelChart(e.target.value);
+            });
+        }
+
+        const areaType = document.getElementById('area-type');
+        if (areaType) {
+            areaType.addEventListener('change', (e) => {
+                this.renderAreaChart(e.target.value);
+            });
+        }
+
+        const polarType = document.getElementById('polar-type');
+        if (polarType) {
+            polarType.addEventListener('change', (e) => {
+                this.renderPolarChart(e.target.value);
+            });
+        }
+
+        const gaugeType = document.getElementById('gauge-type');
+        if (gaugeType) {
+            gaugeType.addEventListener('change', (e) => {
+                this.renderGaugeChart(e.target.value);
+            });
+        }
+
+        // 产品分析控件
+        const sankeyType = document.getElementById('sankey-type');
+        if (sankeyType) {
+            sankeyType.addEventListener('change', (e) => {
+                this.renderSankeyChart(e.target.value);
+            });
+        }
+
+        const treeType = document.getElementById('tree-type');
+        if (treeType) {
+            treeType.addEventListener('change', (e) => {
+                this.renderTreeChart(e.target.value);
+            });
+        }
+
+        const heatmapType = document.getElementById('heatmap-type');
+        if (heatmapType) {
+            heatmapType.addEventListener('change', (e) => {
+                this.renderHeatMapChart(e.target.value);
+            });
+        }
+
+        const liquidType = document.getElementById('liquid-type');
+        if (liquidType) {
+            liquidType.addEventListener('change', (e) => {
+                this.renderLiquidChart(e.target.value);
+            });
+        }
+    }
 }
 
 // 初始化交互演示
@@ -1080,7 +1703,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // 确保Chart.js已加载
     if (typeof Chart !== 'undefined') {
         interactiveDemo = new InteractiveDemo();
-        console.log('Interactive Demo initialized successfully');
+        // 设置额外的控件监听器
+        interactiveDemo.setupAdditionalControls();
+        console.log('Interactive Demo initialized successfully with additional chart types');
     } else {
         console.error('Chart.js not loaded');
     }
