@@ -118,8 +118,25 @@ class ImageGallery {
     }
     
     populateFilters() {
-        // 填充文件夹筛选器
-        const folders = Object.keys(this.imageData.folders).sort();
+        // 填充文件夹筛选器 - 按数字序号排序
+        const folders = Object.keys(this.imageData.folders).sort((a, b) => {
+            // 提取文件夹名开头的数字序号
+            const getNumericPrefix = (folderName) => {
+                const match = folderName.match(/^(\d+)-/);
+                return match ? parseInt(match[1]) : 999; // 没有数字前缀的排在最后
+            };
+            
+            const numA = getNumericPrefix(a);
+            const numB = getNumericPrefix(b);
+            
+            // 如果数字相同，则按原来的字符串排序
+            if (numA === numB) {
+                return a.localeCompare(b);
+            }
+            
+            return numA - numB;
+        });
+        
         folders.forEach(folder => {
             const option = document.createElement('option');
             option.value = folder;
@@ -243,7 +260,26 @@ class ImageGallery {
             imagesByFolder[image.folder].push(image);
         });
         
-        Object.keys(imagesByFolder).sort().forEach(folder => {
+        // 按数字序号排序文件夹
+        const sortedFolderNames = Object.keys(imagesByFolder).sort((a, b) => {
+            // 提取文件夹名开头的数字序号
+            const getNumericPrefix = (folderName) => {
+                const match = folderName.match(/^(\d+)-/);
+                return match ? parseInt(match[1]) : 999; // 没有数字前缀的排在最后
+            };
+            
+            const numA = getNumericPrefix(a);
+            const numB = getNumericPrefix(b);
+            
+            // 如果数字相同，则按原来的字符串排序
+            if (numA === numB) {
+                return a.localeCompare(b);
+            }
+            
+            return numA - numB;
+        });
+        
+        sortedFolderNames.forEach(folder => {
             const folderCard = this.createFolderCard(folder, imagesByFolder[folder]);
             container.appendChild(folderCard);
         });
