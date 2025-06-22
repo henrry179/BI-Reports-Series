@@ -10,6 +10,12 @@ class ImageGallery {
         this.currentView = 'grid';
         this.currentImageIndex = 0;
         
+        // 文件夹层级管理
+        this.folderHierarchy = {};
+        this.expandedFolders = new Set();
+        this.currentFolderPath = [];
+        this.folderStates = new Map(); // 存储每个文件夹的展开状态
+        
         // DOM 元素
         this.galleryContainer = document.getElementById('gallery-container');
         this.searchInput = document.getElementById('search-input');
@@ -28,6 +34,7 @@ class ImageGallery {
     async init() {
         try {
             await this.loadImageData();
+            this.buildFolderHierarchy();
             this.setupEventListeners();
             this.populateFilters();
             this.updateStats();
@@ -47,6 +54,39 @@ class ImageGallery {
         } catch (error) {
             throw new Error('无法加载图片数据: ' + error.message);
         }
+    }
+    
+    buildFolderHierarchy() {
+        this.folderHierarchy = {};
+        
+        // 根据图片路径构建文件夹层级结构
+        this.imageData.images.forEach(image => {
+            const pathParts = image.path.split('/');
+            let currentLevel = this.folderHierarchy;
+            
+            // 构建层级结构，跳过最后一个元素（文件名）
+            for (let i = 0; i < pathParts.length - 1; i++) {
+                const folderName = pathParts[i];
+                if (!currentLevel[folderName]) {
+                    currentLevel[folderName] = {
+                        name: folderName,
+                        cleanName: this.getCleanFolderName(folderName),
+                        children: {},
+                        images: [],
+                        path: pathParts.slice(0, i + 1).join('/'),
+                        level: i,
+                        isExpanded: false
+                    };
+                }
+                currentLevel[folderName].images.push(image);
+                currentLevel = currentLevel[folderName].children;
+            }
+        });
+    }
+    
+    getCleanFolderName(folderName) {
+        // 移除数字前缀并美化文件夹名称
+        return folderName.replace(/^\d+-/, '').replace(/[-_]/g, ' ');
     }
     
     setupEventListeners() {
@@ -216,7 +256,7 @@ class ImageGallery {
                 this.renderListView();
                 break;
             case 'folder':
-                this.renderFolderView();
+                this.renderHierarchicalFolderView();
                 break;
         }
     }
@@ -247,31 +287,82 @@ class ImageGallery {
         this.galleryContainer.appendChild(container);
     }
     
-    renderFolderView() {
+    renderHierarchicalFolderView() {
         const container = document.createElement('div');
-        container.className = 'gallery-folders';
+        container.className = 'gallery-folders-hierarchical';
         
-        // 按文件夹分组
-        const imagesByFolder = {};
-        this.filteredImages.forEach(image => {
-            if (!imagesByFolder[image.folder]) {
-                imagesByFolder[image.folder] = [];
+        // 添加面包屑导航
+        if (this.currentFolderPath.length > 0) {
+            const breadcrumb = this.createBreadcrumb();
+            container.appendChild(breadcrumb);
+        }
+        
+        // 渲染当前层级的文件夹和图片
+        const currentLevel = this.getCurrentHierarchyLevel();
+        this.renderFolderLevel(container, currentLevel, 0);
+        
+        this.galleryContainer.innerHTML = '';
+        this.galleryContainer.appendChild(container);
+    }
+    
+    getCurrentHierarchyLevel() {
+        let currentLevel = this.folderHierarchy;
+        for (const folderName of this.currentFolderPath) {
+            if (currentLevel[folderName] && currentLevel[folderName].children) {
+                currentLevel = currentLevel[folderName].children;
             }
-            imagesByFolder[image.folder].push(image);
+        }
+        return currentLevel;
+    }
+    
+    createBreadcrumb() {
+        const breadcrumb = document.createElement('div');
+        breadcrumb.className = 'folder-breadcrumb';
+        
+        // 根目录链接
+        const homeLink = document.createElement('span');
+        homeLink.className = 'breadcrumb-item breadcrumb-link';
+        homeLink.innerHTML = '<i class="fas fa-home"></i> 首页';
+        homeLink.addEventListener('click', () => {
+            this.currentFolderPath = [];
+            this.renderHierarchicalFolderView();
+        });
+        breadcrumb.appendChild(homeLink);
+        
+        // 路径链接
+        this.currentFolderPath.forEach((folderName, index) => {
+            const separator = document.createElement('span');
+            separator.className = 'breadcrumb-separator';
+            separator.textContent = '>';
+            breadcrumb.appendChild(separator);
+            
+            const link = document.createElement('span');
+            link.className = 'breadcrumb-item breadcrumb-link';
+            link.textContent = this.getCleanFolderName(folderName);
+            link.addEventListener('click', () => {
+                this.currentFolderPath = this.currentFolderPath.slice(0, index + 1);
+                this.renderHierarchicalFolderView();
+            });
+            breadcrumb.appendChild(link);
         });
         
+        return breadcrumb;
+    }
+    
+    renderFolderLevel(container, folderLevel, depth) {
+        const folderGrid = document.createElement('div');
+        folderGrid.className = 'folder-grid';
+        
         // 按数字序号排序文件夹
-        const sortedFolderNames = Object.keys(imagesByFolder).sort((a, b) => {
-            // 提取文件夹名开头的数字序号
+        const sortedFolderNames = Object.keys(folderLevel).sort((a, b) => {
             const getNumericPrefix = (folderName) => {
                 const match = folderName.match(/^(\d+)-/);
-                return match ? parseInt(match[1]) : 999; // 没有数字前缀的排在最后
+                return match ? parseInt(match[1]) : 999;
             };
             
             const numA = getNumericPrefix(a);
             const numB = getNumericPrefix(b);
             
-            // 如果数字相同，则按原来的字符串排序
             if (numA === numB) {
                 return a.localeCompare(b);
             }
@@ -279,13 +370,100 @@ class ImageGallery {
             return numA - numB;
         });
         
-        sortedFolderNames.forEach(folder => {
-            const folderCard = this.createFolderCard(folder, imagesByFolder[folder]);
-            container.appendChild(folderCard);
+        sortedFolderNames.forEach(folderName => {
+            const folderInfo = folderLevel[folderName];
+            const folderCard = this.createHierarchicalFolderCard(folderInfo, depth);
+            folderGrid.appendChild(folderCard);
         });
         
-        this.galleryContainer.innerHTML = '';
-        this.galleryContainer.appendChild(container);
+        container.appendChild(folderGrid);
+    }
+    
+    createHierarchicalFolderCard(folderInfo, depth) {
+        const card = document.createElement('div');
+        card.className = `folder-card-hierarchical depth-${depth}`;
+        
+        const hasSubfolders = Object.keys(folderInfo.children).length > 0;
+        const previewImages = folderInfo.images.slice(0, 6);
+        const totalImages = folderInfo.images.length;
+        
+        // 计算子文件夹中的图片总数
+        const totalImagesInSubfolders = this.countImagesInSubfolders(folderInfo);
+        const totalAllImages = totalImages + totalImagesInSubfolders;
+        
+        card.innerHTML = `
+            <div class="folder-header-hierarchical">
+                <div class="folder-title-section">
+                    <div class="folder-icon-container">
+                        <i class="fas fa-folder ${hasSubfolders ? 'has-subfolders' : ''}"></i>
+                    </div>
+                    <div class="folder-info">
+                        <div class="folder-title">${folderInfo.cleanName}</div>
+                        <div class="folder-stats">
+                            <span class="image-count">${totalAllImages} 张图片</span>
+                            ${hasSubfolders ? `<span class="subfolder-count">${Object.keys(folderInfo.children).length} 个子文件夹</span>` : ''}
+                        </div>
+                    </div>
+                </div>
+                <div class="folder-actions">
+                    ${hasSubfolders ? `
+                        <button class="btn-expand" onclick="gallery.enterFolder('${folderInfo.name}')">
+                            <i class="fas fa-folder-open"></i> 打开
+                        </button>
+                    ` : ''}
+                    ${totalImages > 0 ? `
+                        <button class="btn-view-images" onclick="gallery.viewFolderImages('${folderInfo.path}')">
+                            <i class="fas fa-images"></i> 查看图片
+                        </button>
+                    ` : ''}
+                </div>
+            </div>
+            ${previewImages.length > 0 ? `
+                <div class="folder-images-preview">
+                    ${previewImages.map((image, index) => `
+                        <img class="folder-preview-image" 
+                             src="../${image.path}" 
+                             alt="${image.filename}"
+                             onclick="gallery.openModal(gallery.imageData.images.find(img => img.path === '${image.path}'), ${this.imageData.images.indexOf(image)})"
+                             onerror="this.style.display='none'" 
+                             loading="lazy">
+                    `).join('')}
+                    ${totalImages > 6 ? `
+                        <div class="more-images-indicator">
+                            <i class="fas fa-plus"></i>
+                            <span>还有 ${totalImages - 6} 张</span>
+                        </div>
+                    ` : ''}
+                </div>
+            ` : ''}
+        `;
+        
+        return card;
+    }
+    
+    countImagesInSubfolders(folderInfo) {
+        let count = 0;
+        Object.values(folderInfo.children).forEach(child => {
+            count += child.images.length;
+            count += this.countImagesInSubfolders(child);
+        });
+        return count;
+    }
+    
+    enterFolder(folderName) {
+        this.currentFolderPath.push(folderName);
+        this.renderHierarchicalFolderView();
+    }
+    
+    viewFolderImages(folderPath) {
+        // 筛选显示特定文件夹的图片
+        this.filteredImages = this.imageData.images.filter(image => 
+            image.path.startsWith(folderPath + '/')
+        );
+        this.currentView = 'grid';
+        document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('grid-view').classList.add('active');
+        this.renderGridView();
     }
     
     createImageCard(image, index) {
@@ -323,33 +501,6 @@ class ImageGallery {
         `;
         
         return item;
-    }
-    
-    createFolderCard(folderName, images) {
-        const card = document.createElement('div');
-        card.className = 'folder-card';
-        
-        const folderInfo = this.imageData.folders[folderName];
-        const previewImages = images.slice(0, 6);
-        
-        card.innerHTML = `
-            <div class="folder-header">
-                <div class="folder-title">
-                    <i class="fas fa-folder"></i>
-                    ${folderInfo.clean_name}
-                </div>
-                <div class="folder-count">${images.length} 张图片</div>
-            </div>
-            <div class="folder-images">
-                ${previewImages.map((image, index) => `
-                    <img class="folder-image" src="../${image.path}" alt="${image.filename}" 
-                         onclick="gallery.openModal(gallery.filteredImages.find(img => img.path === '${image.path}'), ${this.filteredImages.indexOf(image)})"
-                         onerror="this.style.display='none'" loading="lazy">
-                `).join('')}
-            </div>
-        `;
-        
-        return card;
     }
     
     openModal(image, index) {

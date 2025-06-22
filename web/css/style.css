@@ -504,6 +504,317 @@ body {
     transform: scale(1.05);
 }
 
+/* 层级文件夹视图 */
+.gallery-folders-hierarchical {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+/* 面包屑导航 */
+.folder-breadcrumb {
+    background: var(--light-color);
+    padding: 1rem 1.5rem;
+    border-radius: var(--border-radius);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    border: 1px solid var(--border-color);
+    margin-bottom: 1rem;
+}
+
+.breadcrumb-item {
+    font-size: 0.9rem;
+    color: var(--text-color);
+}
+
+.breadcrumb-link {
+    color: var(--primary-color);
+    cursor: pointer;
+    padding: 0.3rem 0.6rem;
+    border-radius: 4px;
+    transition: var(--transition);
+    text-decoration: none;
+}
+
+.breadcrumb-link:hover {
+    background: var(--primary-color);
+    color: white;
+}
+
+.breadcrumb-separator {
+    color: var(--secondary-color);
+    margin: 0 0.3rem;
+}
+
+/* 文件夹网格 */
+.folder-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.5rem;
+}
+
+/* 层级文件夹卡片 */
+.folder-card-hierarchical {
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    background: white;
+    overflow: hidden;
+    transition: var(--transition);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.folder-card-hierarchical:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+}
+
+.folder-card-hierarchical.depth-0 {
+    border-left: 4px solid var(--primary-color);
+}
+
+.folder-card-hierarchical.depth-1 {
+    border-left: 4px solid #28a745;
+}
+
+.folder-card-hierarchical.depth-2 {
+    border-left: 4px solid #ffc107;
+}
+
+.folder-card-hierarchical.depth-3 {
+    border-left: 4px solid #dc3545;
+}
+
+/* 文件夹头部 */
+.folder-header-hierarchical {
+    padding: 1.5rem;
+    background: linear-gradient(135deg, var(--light-color) 0%, #f8f9fa 100%);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.folder-title-section {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex: 1;
+    min-width: 200px;
+}
+
+.folder-icon-container {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.folder-icon-container i {
+    color: white;
+    font-size: 1.2rem;
+}
+
+.folder-icon-container i.has-subfolders {
+    color: #ffc107;
+}
+
+.folder-info {
+    flex: 1;
+}
+
+.folder-title {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: var(--text-color);
+    margin-bottom: 0.3rem;
+}
+
+.folder-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    font-size: 0.85rem;
+    color: var(--secondary-color);
+}
+
+.image-count,
+.subfolder-count {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.image-count::before {
+    content: "🖼️";
+}
+
+.subfolder-count::before {
+    content: "📁";
+}
+
+/* 文件夹操作按钮 */
+.folder-actions {
+    display: flex;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+}
+
+.btn-expand,
+.btn-view-images {
+    padding: 0.6rem 1.2rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+}
+
+.btn-expand {
+    background: var(--primary-color);
+    color: white;
+}
+
+.btn-expand:hover {
+    background: #0056b3;
+    transform: translateY(-1px);
+}
+
+.btn-view-images {
+    background: transparent;
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+}
+
+.btn-view-images:hover {
+    background: var(--primary-color);
+    color: white;
+    transform: translateY(-1px);
+}
+
+/* 文件夹图片预览 */
+.folder-images-preview {
+    padding: 1rem 1.5rem 1.5rem;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.8rem;
+    background: #fafbfc;
+}
+
+.folder-preview-image {
+    width: 100%;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: var(--transition);
+    border: 2px solid transparent;
+}
+
+.folder-preview-image:hover {
+    transform: scale(1.05);
+    border-color: var(--primary-color);
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+}
+
+.more-images-indicator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 123, 255, 0.1);
+    border: 2px dashed var(--primary-color);
+    border-radius: 8px;
+    color: var(--primary-color);
+    font-size: 0.8rem;
+    font-weight: 500;
+    min-height: 80px;
+    gap: 0.3rem;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.more-images-indicator:hover {
+    background: rgba(0, 123, 255, 0.2);
+    transform: scale(1.02);
+}
+
+.more-images-indicator i {
+    font-size: 1.2rem;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .folder-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .folder-header-hierarchical {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .folder-title-section {
+        min-width: auto;
+    }
+    
+    .folder-actions {
+        width: 100%;
+        justify-content: flex-start;
+    }
+    
+    .btn-expand,
+    .btn-view-images {
+        flex: 1;
+        justify-content: center;
+    }
+    
+    .folder-images-preview {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .breadcrumb-item {
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .folder-card-hierarchical {
+        margin: 0 -0.5rem;
+        border-radius: 8px;
+    }
+    
+    .folder-header-hierarchical {
+        padding: 1rem;
+    }
+    
+    .folder-images-preview {
+        padding: 1rem;
+        grid-template-columns: 1fr;
+    }
+    
+    .folder-preview-image {
+        height: 120px;
+    }
+    
+    .more-images-indicator {
+        min-height: 120px;
+    }
+}
+
 /* 模态框 */
 .modal {
     display: none;
