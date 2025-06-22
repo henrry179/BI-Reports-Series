@@ -13,12 +13,12 @@ class ImageGallery {
         // 文件夹层级管理
         this.folderHierarchy = {};
         this.expandedFolders = new Set();
-        this.currentFolderPath = [];
+        this.currentFolderPath = []; // 文件夹视图使用
         this.folderStates = new Map(); // 存储每个文件夹的展开状态
         
-        // 新增：网格和列表视图的层级展开状态管理
-        this.expandedGridFolders = new Set();
-        this.expandedListFolders = new Set();
+        // 新增：网格和列表视图的独立文件夹导航状态
+        this.gridCurrentFolderPath = []; // 网格视图的当前文件夹路径
+        this.listCurrentFolderPath = []; // 列表视图的当前文件夹路径
         
         // 搜索增强功能
         this.searchHistory = JSON.parse(localStorage.getItem('bi-search-history') || '[]');
@@ -420,15 +420,61 @@ class ImageGallery {
         const container = document.createElement('div');
         container.className = 'gallery-grid-hierarchical';
         
-        // 按文件夹分组图片
-        const groupedImages = this.groupImagesByFolder(this.filteredImages);
+        // 添加面包屑导航（如果在子文件夹中）
+        if (this.gridCurrentFolderPath.length > 0) {
+            const breadcrumb = this.createGridBreadcrumb();
+            container.appendChild(breadcrumb);
+        }
         
-        // 渲染每个文件夹组
-        Object.keys(groupedImages).forEach(folderPath => {
-            const folderGroup = groupedImages[folderPath];
-            const folderGroupElement = this.createGridFolderGroup(folderGroup, folderPath);
-            container.appendChild(folderGroupElement);
-        });
+        // 获取当前层级的文件夹和图片
+        const currentLevel = this.getCurrentGridLevel();
+        const { folders, images } = this.getFolderContentForGrid(currentLevel);
+        
+        // 创建网格容器
+        const gridContainer = document.createElement('div');
+        gridContainer.className = 'hierarchical-grid-container';
+        
+        // 先显示文件夹
+        if (folders.length > 0) {
+            const folderSection = document.createElement('div');
+            folderSection.className = 'folder-section-grid';
+            
+            const folderGrid = document.createElement('div');
+            folderGrid.className = 'folders-grid';
+            
+            folders.forEach(folderInfo => {
+                const folderCard = this.createGridFolderCard(folderInfo);
+                folderGrid.appendChild(folderCard);
+            });
+            
+            folderSection.appendChild(folderGrid);
+            gridContainer.appendChild(folderSection);
+        }
+        
+        // 再显示图片
+        if (images.length > 0) {
+            const imageSection = document.createElement('div');
+            imageSection.className = 'image-section-grid';
+            
+            const imageGrid = document.createElement('div');
+            imageGrid.className = 'images-grid';
+            
+            images.forEach((image, index) => {
+                const card = this.createImageCard(image, index);
+                imageGrid.appendChild(card);
+            });
+            
+            imageSection.appendChild(imageGrid);
+            gridContainer.appendChild(imageSection);
+        }
+        
+        container.appendChild(gridContainer);
+        
+        // 如果没有内容，显示空状态
+        if (folders.length === 0 && images.length === 0) {
+            this.showEmptyState();
+            return;
+        }
         
         this.galleryContainer.innerHTML = '';
         this.galleryContainer.appendChild(container);
@@ -438,38 +484,95 @@ class ImageGallery {
         const container = document.createElement('div');
         container.className = 'gallery-list-hierarchical';
         
-        // 按文件夹分组图片
-        const groupedImages = this.groupImagesByFolder(this.filteredImages);
+        // 添加面包屑导航（如果在子文件夹中）
+        if (this.listCurrentFolderPath.length > 0) {
+            const breadcrumb = this.createListBreadcrumb();
+            container.appendChild(breadcrumb);
+        }
         
-        // 渲染每个文件夹组
-        Object.keys(groupedImages).forEach(folderPath => {
-            const folderGroup = groupedImages[folderPath];
-            const folderGroupElement = this.createListFolderGroup(folderGroup, folderPath);
-            container.appendChild(folderGroupElement);
-        });
+        // 获取当前层级的文件夹和图片
+        const currentLevel = this.getCurrentListLevel();
+        const { folders, images } = this.getFolderContentForList(currentLevel);
+        
+        // 创建列表容器
+        const listContainer = document.createElement('div');
+        listContainer.className = 'hierarchical-list-container';
+        
+        // 先显示文件夹
+        if (folders.length > 0) {
+            const folderSection = document.createElement('div');
+            folderSection.className = 'folder-section-list';
+            
+            const folderList = document.createElement('div');
+            folderList.className = 'folders-list';
+            
+            folders.forEach(folderInfo => {
+                const folderItem = this.createListFolderItem(folderInfo);
+                folderList.appendChild(folderItem);
+            });
+            
+            folderSection.appendChild(folderList);
+            listContainer.appendChild(folderSection);
+        }
+        
+        // 再显示图片
+        if (images.length > 0) {
+            const imageSection = document.createElement('div');
+            imageSection.className = 'image-section-list';
+            
+            const imageList = document.createElement('div');
+            imageList.className = 'images-list';
+            
+            images.forEach((image, index) => {
+                const item = this.createListItem(image, index);
+                imageList.appendChild(item);
+            });
+            
+            imageSection.appendChild(imageList);
+            listContainer.appendChild(imageSection);
+        }
+        
+        container.appendChild(listContainer);
+        
+        // 如果没有内容，显示空状态
+        if (folders.length === 0 && images.length === 0) {
+            this.showEmptyState();
+            return;
+        }
         
         this.galleryContainer.innerHTML = '';
         this.galleryContainer.appendChild(container);
     }
     
-    // 新增：按文件夹分组图片的通用函数
-    groupImagesByFolder(images) {
-        const grouped = {};
-        images.forEach(image => {
-            const folderPath = image.folder;
-            if (!grouped[folderPath]) {
-                grouped[folderPath] = {
-                    folderPath: folderPath,
-                    folderName: image.clean_folder_name,
-                    formattedFolderName: this.getFormattedFolderName(image.folder),
-                    images: []
-                };
+    // 新增：获取网格视图当前层级
+    getCurrentGridLevel() {
+        let currentLevel = this.folderHierarchy;
+        for (const folderName of this.gridCurrentFolderPath) {
+            if (currentLevel[folderName] && currentLevel[folderName].children) {
+                currentLevel = currentLevel[folderName].children;
             }
-            grouped[folderPath].images.push(image);
-        });
+        }
+        return currentLevel;
+    }
+    
+    // 新增：获取列表视图当前层级
+    getCurrentListLevel() {
+        let currentLevel = this.folderHierarchy;
+        for (const folderName of this.listCurrentFolderPath) {
+            if (currentLevel[folderName] && currentLevel[folderName].children) {
+                currentLevel = currentLevel[folderName].children;
+            }
+        }
+        return currentLevel;
+    }
+    
+    // 新增：获取网格视图当前层级的文件夹和图片内容
+    getFolderContentForGrid(currentLevel) {
+        const folders = [];
+        const images = [];
         
         // 按数字序号排序文件夹
-        const sortedKeys = Object.keys(grouped).sort((a, b) => {
+        const sortedFolderNames = Object.keys(currentLevel).sort((a, b) => {
             const getNumericPrefix = (folderName) => {
                 const match = folderName.match(/^(\d+)-/);
                 return match ? parseInt(match[1]) : 999;
@@ -485,165 +588,249 @@ class ImageGallery {
             return numA - numB;
         });
         
-        const sortedGrouped = {};
-        sortedKeys.forEach(key => {
-            sortedGrouped[key] = grouped[key];
+        // 收集文件夹
+        sortedFolderNames.forEach(folderName => {
+            const folderInfo = currentLevel[folderName];
+            folders.push(folderInfo);
         });
         
-        return sortedGrouped;
+        // 收集当前层级的图片
+        if (this.gridCurrentFolderPath.length === 0) {
+            // 根目录：不显示图片，只显示文件夹
+            // 根目录层级不显示具体图片，只显示文件夹供用户导航
+        } else {
+            // 子目录：显示当前文件夹中的图片
+            const currentFolderPath = this.gridCurrentFolderPath.join('/');
+            images.push(...this.filteredImages.filter(image => {
+                const imageFolderPath = image.path.substring(0, image.path.lastIndexOf('/'));
+                return imageFolderPath === currentFolderPath;
+            }));
+        }
+        
+        return { folders, images };
     }
     
-    // 新增：创建网格视图的文件夹组
-    createGridFolderGroup(folderGroup, folderPath) {
-        const groupContainer = document.createElement('div');
-        groupContainer.className = 'folder-group-grid';
+    // 新增：获取列表视图当前层级的文件夹和图片内容
+    getFolderContentForList(currentLevel) {
+        const folders = [];
+        const images = [];
         
-        const isExpanded = this.expandedGridFolders.has(folderPath);
+        // 按数字序号排序文件夹
+        const sortedFolderNames = Object.keys(currentLevel).sort((a, b) => {
+            const getNumericPrefix = (folderName) => {
+                const match = folderName.match(/^(\d+)-/);
+                return match ? parseInt(match[1]) : 999;
+            };
+            
+            const numA = getNumericPrefix(a);
+            const numB = getNumericPrefix(b);
+            
+            if (numA === numB) {
+                return a.localeCompare(b);
+            }
+            
+            return numA - numB;
+        });
         
-        // 文件夹组头部
-        const groupHeader = document.createElement('div');
-        groupHeader.className = 'folder-group-header';
-        groupHeader.innerHTML = `
-            <div class="folder-group-title">
-                <button class="folder-toggle-btn" onclick="gallery.toggleGridFolder('${folderPath}')">
-                    <i class="fas fa-chevron-${isExpanded ? 'down' : 'right'}"></i>
-                </button>
-                <div class="folder-group-icon">
-                    <i class="fas fa-folder"></i>
+        // 收集文件夹
+        sortedFolderNames.forEach(folderName => {
+            const folderInfo = currentLevel[folderName];
+            folders.push(folderInfo);
+        });
+        
+        // 收集当前层级的图片
+        if (this.listCurrentFolderPath.length === 0) {
+            // 根目录：不显示图片，只显示文件夹
+            // 根目录层级不显示具体图片，只显示文件夹供用户导航
+        } else {
+            // 子目录：显示当前文件夹中的图片
+            const currentFolderPath = this.listCurrentFolderPath.join('/');
+            images.push(...this.filteredImages.filter(image => {
+                const imageFolderPath = image.path.substring(0, image.path.lastIndexOf('/'));
+                return imageFolderPath === currentFolderPath;
+            }));
+        }
+        
+        return { folders, images };
+    }
+    
+    // 新增：创建网格视图的面包屑导航
+    createGridBreadcrumb() {
+        const breadcrumb = document.createElement('div');
+        breadcrumb.className = 'folder-breadcrumb grid-breadcrumb';
+        
+        // 根目录链接
+        const homeLink = document.createElement('span');
+        homeLink.className = 'breadcrumb-item breadcrumb-link';
+        homeLink.innerHTML = '<i class="fas fa-home"></i> 首页';
+        homeLink.addEventListener('click', () => {
+            this.gridCurrentFolderPath = [];
+            this.renderGridView();
+        });
+        breadcrumb.appendChild(homeLink);
+        
+        // 路径链接
+        this.gridCurrentFolderPath.forEach((folderName, index) => {
+            const separator = document.createElement('span');
+            separator.className = 'breadcrumb-separator';
+            separator.textContent = '>';
+            breadcrumb.appendChild(separator);
+            
+            const link = document.createElement('span');
+            link.className = 'breadcrumb-item breadcrumb-link';
+            link.textContent = this.getFormattedFolderName(folderName);
+            link.addEventListener('click', () => {
+                this.gridCurrentFolderPath = this.gridCurrentFolderPath.slice(0, index + 1);
+                this.renderGridView();
+            });
+            breadcrumb.appendChild(link);
+        });
+        
+        return breadcrumb;
+    }
+    
+    // 新增：创建列表视图的面包屑导航
+    createListBreadcrumb() {
+        const breadcrumb = document.createElement('div');
+        breadcrumb.className = 'folder-breadcrumb list-breadcrumb';
+        
+        // 根目录链接
+        const homeLink = document.createElement('span');
+        homeLink.className = 'breadcrumb-item breadcrumb-link';
+        homeLink.innerHTML = '<i class="fas fa-home"></i> 首页';
+        homeLink.addEventListener('click', () => {
+            this.listCurrentFolderPath = [];
+            this.renderListView();
+        });
+        breadcrumb.appendChild(homeLink);
+        
+        // 路径链接
+        this.listCurrentFolderPath.forEach((folderName, index) => {
+            const separator = document.createElement('span');
+            separator.className = 'breadcrumb-separator';
+            separator.textContent = '>';
+            breadcrumb.appendChild(separator);
+            
+            const link = document.createElement('span');
+            link.className = 'breadcrumb-item breadcrumb-link';
+            link.textContent = this.getFormattedFolderName(folderName);
+            link.addEventListener('click', () => {
+                this.listCurrentFolderPath = this.listCurrentFolderPath.slice(0, index + 1);
+                this.renderListView();
+            });
+            breadcrumb.appendChild(link);
+        });
+        
+        return breadcrumb;
+    }
+    
+    // 新增：创建网格视图的文件夹卡片
+    createGridFolderCard(folderInfo) {
+        const card = document.createElement('div');
+        card.className = `grid-folder-card depth-${folderInfo.level}`;
+        
+        const hasSubfolders = Object.keys(folderInfo.children).length > 0;
+        const previewImages = folderInfo.images.slice(0, 4);
+        const totalImages = folderInfo.images.length;
+        const totalImagesInSubfolders = this.countImagesInSubfolders(folderInfo);
+        const totalAllImages = totalImages + totalImagesInSubfolders;
+        
+        card.innerHTML = `
+            <div class="grid-folder-header">
+                <div class="grid-folder-icon">
+                    <i class="fas fa-folder ${hasSubfolders ? 'has-subfolders' : ''}"></i>
                 </div>
-                <div class="folder-group-info">
-                    <h3 class="folder-group-name">${folderGroup.formattedFolderName}</h3>
-                    <span class="folder-group-count">${folderGroup.images.length} 张图片</span>
+                <div class="grid-folder-info">
+                    <div class="grid-folder-title">${folderInfo.formattedName}</div>
+                    <div class="grid-folder-stats">
+                        <span class="image-count">${totalAllImages} 张图片</span>
+                        ${hasSubfolders ? `<span class="subfolder-count">${Object.keys(folderInfo.children).length} 个子文件夹</span>` : ''}
+                    </div>
                 </div>
             </div>
-            <div class="folder-group-actions">
-                <button class="btn-view-all" onclick="gallery.viewFolderImages('${folderPath}')">
-                    <i class="fas fa-expand-arrows-alt"></i> 全部展示
-                </button>
+            ${previewImages.length > 0 ? `
+                <div class="grid-folder-preview">
+                    ${previewImages.map(image => `
+                        <img class="grid-preview-image" 
+                             src="../${image.path}" 
+                             alt="${image.filename}"
+                             onerror="this.style.display='none'" 
+                             loading="lazy">
+                    `).join('')}
+                    ${totalImages > 4 ? `
+                        <div class="grid-more-indicator">+${totalImages - 4}</div>
+                    ` : ''}
+                </div>
+            ` : ''}
+        `;
+        
+        // 添加点击事件进入文件夹
+        card.addEventListener('click', () => {
+            this.enterGridFolder(folderInfo.name);
+        });
+        
+        return card;
+    }
+    
+    // 新增：创建列表视图的文件夹项
+    createListFolderItem(folderInfo) {
+        const item = document.createElement('div');
+        item.className = `list-folder-item depth-${folderInfo.level}`;
+        
+        const hasSubfolders = Object.keys(folderInfo.children).length > 0;
+        const totalImages = folderInfo.images.length;
+        const totalImagesInSubfolders = this.countImagesInSubfolders(folderInfo);
+        const totalAllImages = totalImages + totalImagesInSubfolders;
+        const previewImage = folderInfo.images[0];
+        
+        item.innerHTML = `
+            <div class="list-folder-preview">
+                ${previewImage ? `
+                    <img class="list-folder-image" 
+                         src="../${previewImage.path}" 
+                         alt="${previewImage.filename}"
+                         onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0iI2Y4ZiI+PC9yZWN0Pjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjYWFhIj7lm77nlIc8L3RleHQ+PC9zdmc+'" 
+                         loading="lazy">
+                ` : `
+                    <div class="list-folder-placeholder">
+                        <i class="fas fa-folder"></i>
+                    </div>
+                `}
+            </div>
+            <div class="list-folder-content">
+                <div class="list-folder-header">
+                    <div class="list-folder-icon">
+                        <i class="fas fa-folder ${hasSubfolders ? 'has-subfolders' : ''}"></i>
+                    </div>
+                    <div class="list-folder-title">${folderInfo.formattedName}</div>
+                </div>
+                <div class="list-folder-meta">
+                    <span class="image-count">${totalAllImages} 张图片</span>
+                    ${hasSubfolders ? `<span class="subfolder-count">${Object.keys(folderInfo.children).length} 个子文件夹</span>` : ''}
+                </div>
+            </div>
+            <div class="list-folder-action">
+                <i class="fas fa-chevron-right"></i>
             </div>
         `;
         
-        groupContainer.appendChild(groupHeader);
+        // 添加点击事件进入文件夹
+        item.addEventListener('click', () => {
+            this.enterListFolder(folderInfo.name);
+        });
         
-        // 图片网格容器
-        const gridContainer = document.createElement('div');
-        gridContainer.className = `folder-images-grid ${isExpanded ? 'expanded' : 'collapsed'}`;
-        
-        if (isExpanded) {
-            folderGroup.images.forEach((image, index) => {
-                const card = this.createImageCard(image, index);
-                gridContainer.appendChild(card);
-            });
-        } else {
-            // 折叠状态下只显示前6张预览
-            const previewImages = folderGroup.images.slice(0, 6);
-            previewImages.forEach((image, index) => {
-                const card = this.createImageCard(image, index);
-                gridContainer.appendChild(card);
-            });
-            
-            if (folderGroup.images.length > 6) {
-                const moreIndicator = document.createElement('div');
-                moreIndicator.className = 'folder-more-indicator';
-                moreIndicator.innerHTML = `
-                    <div class="more-indicator-content" onclick="gallery.toggleGridFolder('${folderPath}')">
-                        <i class="fas fa-plus"></i>
-                        <span>还有 ${folderGroup.images.length - 6} 张图片</span>
-                        <small>点击展开查看全部</small>
-                    </div>
-                `;
-                gridContainer.appendChild(moreIndicator);
-            }
-        }
-        
-        groupContainer.appendChild(gridContainer);
-        return groupContainer;
+        return item;
     }
     
-    // 新增：创建列表视图的文件夹组
-    createListFolderGroup(folderGroup, folderPath) {
-        const groupContainer = document.createElement('div');
-        groupContainer.className = 'folder-group-list';
-        
-        const isExpanded = this.expandedListFolders.has(folderPath);
-        
-        // 文件夹组头部
-        const groupHeader = document.createElement('div');
-        groupHeader.className = 'folder-group-header';
-        groupHeader.innerHTML = `
-            <div class="folder-group-title">
-                <button class="folder-toggle-btn" onclick="gallery.toggleListFolder('${folderPath}')">
-                    <i class="fas fa-chevron-${isExpanded ? 'down' : 'right'}"></i>
-                </button>
-                <div class="folder-group-icon">
-                    <i class="fas fa-folder"></i>
-                </div>
-                <div class="folder-group-info">
-                    <h3 class="folder-group-name">${folderGroup.formattedFolderName}</h3>
-                    <span class="folder-group-count">${folderGroup.images.length} 张图片</span>
-                </div>
-            </div>
-            <div class="folder-group-actions">
-                <button class="btn-view-all" onclick="gallery.viewFolderImages('${folderPath}')">
-                    <i class="fas fa-expand-arrows-alt"></i> 全部展示
-                </button>
-            </div>
-        `;
-        
-        groupContainer.appendChild(groupHeader);
-        
-        // 图片列表容器
-        const listContainer = document.createElement('div');
-        listContainer.className = `folder-images-list ${isExpanded ? 'expanded' : 'collapsed'}`;
-        
-        if (isExpanded) {
-            folderGroup.images.forEach((image, index) => {
-                const item = this.createListItem(image, index);
-                listContainer.appendChild(item);
-            });
-        } else {
-            // 折叠状态下只显示前3项预览
-            const previewImages = folderGroup.images.slice(0, 3);
-            previewImages.forEach((image, index) => {
-                const item = this.createListItem(image, index);
-                listContainer.appendChild(item);
-            });
-            
-            if (folderGroup.images.length > 3) {
-                const moreIndicator = document.createElement('div');
-                moreIndicator.className = 'folder-more-indicator-list';
-                moreIndicator.innerHTML = `
-                    <div class="more-indicator-content" onclick="gallery.toggleListFolder('${folderPath}')">
-                        <i class="fas fa-chevron-down"></i>
-                        <span>还有 ${folderGroup.images.length - 3} 张图片</span>
-                        <small>点击展开查看全部</small>
-                    </div>
-                `;
-                listContainer.appendChild(moreIndicator);
-            }
-        }
-        
-        groupContainer.appendChild(listContainer);
-        return groupContainer;
-    }
-    
-    // 新增：切换网格视图文件夹展开状态
-    toggleGridFolder(folderPath) {
-        if (this.expandedGridFolders.has(folderPath)) {
-            this.expandedGridFolders.delete(folderPath);
-        } else {
-            this.expandedGridFolders.add(folderPath);
-        }
+    // 新增：进入网格视图文件夹
+    enterGridFolder(folderName) {
+        this.gridCurrentFolderPath.push(folderName);
         this.renderGridView();
     }
     
-    // 新增：切换列表视图文件夹展开状态
-    toggleListFolder(folderPath) {
-        if (this.expandedListFolders.has(folderPath)) {
-            this.expandedListFolders.delete(folderPath);
-        } else {
-            this.expandedListFolders.add(folderPath);
-        }
+    // 新增：进入列表视图文件夹
+    enterListFolder(folderName) {
+        this.listCurrentFolderPath.push(folderName);
         this.renderListView();
     }
     

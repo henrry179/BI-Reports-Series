@@ -2013,75 +2013,128 @@ body {
 /* ===== 多层级网格视图和列表视图样式 ===== */
 
 /* 层级网格容器 */
-.gallery-grid-hierarchical {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-}
-
-/* 层级列表容器 */
+.gallery-grid-hierarchical,
 .gallery-list-hierarchical {
     display: flex;
     flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* 面包屑导航 */
+.grid-breadcrumb,
+.list-breadcrumb {
+    background: white;
+    padding: 1rem 1.5rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+    margin-bottom: 1rem;
+}
+
+/* 层级内容容器 */
+.hierarchical-grid-container,
+.hierarchical-list-container {
+    display: flex;
+    flex-direction: column;
     gap: 2rem;
 }
 
-/* 文件夹组通用样式 */
-.folder-group-grid,
-.folder-group-list {
+/* 文件夹区域 */
+.folder-section-grid,
+.folder-section-list {
     background: white;
     border-radius: var(--border-radius);
     box-shadow: var(--shadow);
     border: 1px solid var(--border-color);
     overflow: hidden;
-    transition: var(--transition);
 }
 
-.folder-group-grid:hover,
-.folder-group-list:hover {
-    box-shadow: var(--shadow-lg);
+/* 图片区域 */
+.image-section-grid,
+.image-section-list {
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+    overflow: hidden;
 }
 
-/* 文件夹组头部 */
-.folder-group-header {
+/* 网格视图文件夹网格 */
+.folders-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    padding: 1.5rem;
+}
+
+/* 网格视图图片网格 */
+.images-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    padding: 1.5rem;
+}
+
+/* 列表视图文件夹列表 */
+.folders-list {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 1.5rem;
+    flex-direction: column;
+    gap: 0;
+}
+
+/* 列表视图图片列表 */
+.images-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1.5rem;
+}
+
+/* ===== 网格视图文件夹卡片 ===== */
+.grid-folder-card {
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    transition: var(--transition);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    height: fit-content;
+}
+
+.grid-folder-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    border-color: var(--primary-color);
+}
+
+.grid-folder-card.depth-0 {
+    border-left: 4px solid var(--primary-color);
+}
+
+.grid-folder-card.depth-1 {
+    border-left: 4px solid var(--success-color);
+}
+
+.grid-folder-card.depth-2 {
+    border-left: 4px solid var(--warning-color);
+}
+
+.grid-folder-card.depth-3 {
+    border-left: 4px solid var(--danger-color);
+}
+
+.grid-folder-header {
+    padding: 1rem;
     background: linear-gradient(135deg, #f8fafc, #e2e8f0);
     border-bottom: 1px solid var(--border-color);
-    min-height: 70px;
-}
-
-.folder-group-title {
     display: flex;
     align-items: center;
     gap: 1rem;
-    flex: 1;
 }
 
-.folder-toggle-btn {
-    background: none;
-    border: none;
-    padding: 0.5rem;
-    cursor: pointer;
-    border-radius: 50%;
-    transition: var(--transition);
-    color: var(--secondary-color);
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.folder-toggle-btn:hover {
-    background: rgba(37, 99, 235, 0.1);
-    color: var(--primary-color);
-    transform: scale(1.1);
-}
-
-.folder-group-icon {
+.grid-folder-icon {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -2091,374 +2144,362 @@ body {
     color: white;
     border-radius: var(--border-radius);
     font-size: 1.2rem;
+    flex-shrink: 0;
 }
 
-.folder-group-info {
+.grid-folder-icon i.has-subfolders {
+    color: #ffd700;
+}
+
+.grid-folder-info {
     flex: 1;
+    min-width: 0;
 }
 
-.folder-group-name {
-    font-size: 1.1rem;
+.grid-folder-title {
+    font-size: 1rem;
     font-weight: 600;
     color: var(--dark-color);
-    margin: 0 0 0.3rem 0;
+    margin-bottom: 0.3rem;
     line-height: 1.3;
+    word-wrap: break-word;
 }
 
-.folder-group-count {
-    font-size: 0.9rem;
-    color: var(--secondary-color);
-    display: flex;
-    align-items: center;
-    gap: 0.3rem;
-}
-
-.folder-group-count::before {
-    content: '📊';
-    font-size: 0.8rem;
-}
-
-.folder-group-actions {
-    display: flex;
-    gap: 0.5rem;
-}
-
-.btn-view-all {
-    background: var(--primary-color);
-    color: white;
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: var(--border-radius);
-    cursor: pointer;
-    transition: var(--transition);
-    font-size: 0.9rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.btn-view-all:hover {
-    background: var(--primary-dark);
-    transform: translateY(-1px);
-}
-
-/* 文件夹内图片网格容器 */
-.folder-images-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 1.5rem;
-    padding: 1.5rem;
-    transition: all 0.3s ease;
-    overflow: hidden;
-}
-
-.folder-images-grid.collapsed {
-    max-height: 300px;
-    overflow: hidden;
-    position: relative;
-}
-
-.folder-images-grid.expanded {
-    max-height: none;
-}
-
-/* 文件夹内图片列表容器 */
-.folder-images-list {
+.grid-folder-stats {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
-    padding: 1.5rem;
-    transition: all 0.3s ease;
-    overflow: hidden;
+    gap: 0.2rem;
+    font-size: 0.85rem;
+    color: var(--secondary-color);
 }
 
-.folder-images-list.collapsed {
-    max-height: 250px;
-    overflow: hidden;
+.grid-folder-preview {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
+    background: var(--border-color);
+    min-height: 120px;
     position: relative;
 }
 
-.folder-images-list.expanded {
-    max-height: none;
-}
-
-/* 更多图片指示器 - 网格版本 */
-.folder-more-indicator {
-    grid-column: 1 / -1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 1rem;
-}
-
-.folder-more-indicator .more-indicator-content {
-    background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
-    border: 2px dashed var(--border-color);
-    border-radius: var(--border-radius);
-    padding: 2rem;
-    text-align: center;
-    cursor: pointer;
+.grid-preview-image {
+    width: 100%;
+    height: 60px;
+    object-fit: cover;
+    background: var(--light-color);
     transition: var(--transition);
-    min-width: 200px;
 }
 
-.folder-more-indicator .more-indicator-content:hover {
+.grid-preview-image:hover {
+    transform: scale(1.02);
+    z-index: 1;
+}
+
+.grid-more-indicator {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 0.2rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+/* ===== 列表视图文件夹项 ===== */
+.list-folder-item {
+    display: flex;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    background: white;
+    transition: var(--transition);
+    cursor: pointer;
+    gap: 1rem;
+}
+
+.list-folder-item:last-child {
+    border-bottom: none;
+}
+
+.list-folder-item:hover {
+    background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+    border-color: var(--primary-color);
+    transform: translateX(3px);
+}
+
+.list-folder-item.depth-0 {
+    border-left: 4px solid var(--primary-color);
+}
+
+.list-folder-item.depth-1 {
+    border-left: 4px solid var(--success-color);
+    padding-left: 2rem;
+}
+
+.list-folder-item.depth-2 {
+    border-left: 4px solid var(--warning-color);
+    padding-left: 3rem;
+}
+
+.list-folder-item.depth-3 {
+    border-left: 4px solid var(--danger-color);
+    padding-left: 4rem;
+}
+
+.list-folder-preview {
+    width: 80px;
+    height: 60px;
+    flex-shrink: 0;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    background: var(--light-color);
+}
+
+.list-folder-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.list-folder-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
     color: white;
-    border-color: var(--primary-color);
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
-}
-
-.folder-more-indicator i {
     font-size: 1.5rem;
-    margin-bottom: 0.5rem;
-    display: block;
 }
 
-.folder-more-indicator span {
-    display: block;
-    font-weight: 600;
+.list-folder-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.list-folder-header {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
     margin-bottom: 0.3rem;
 }
 
-.folder-more-indicator small {
-    color: var(--secondary-color);
-    font-size: 0.8rem;
-}
-
-.folder-more-indicator .more-indicator-content:hover small {
-    color: rgba(255, 255, 255, 0.8);
-}
-
-/* 更多图片指示器 - 列表版本 */
-.folder-more-indicator-list {
+.list-folder-icon {
     display: flex;
-    justify-content: center;
     align-items: center;
-    margin-top: 1rem;
-}
-
-.folder-more-indicator-list .more-indicator-content {
-    background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
-    border: 2px dashed var(--border-color);
-    border-radius: var(--border-radius);
-    padding: 1.5rem 2rem;
-    text-align: center;
-    cursor: pointer;
-    transition: var(--transition);
-    width: 100%;
-    max-width: 400px;
-}
-
-.folder-more-indicator-list .more-indicator-content:hover {
+    justify-content: center;
+    width: 30px;
+    height: 30px;
     background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
     color: white;
-    border-color: var(--primary-color);
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
+    border-radius: 50%;
+    font-size: 0.9rem;
+    flex-shrink: 0;
 }
 
-.folder-more-indicator-list i {
-    font-size: 1.2rem;
-    margin-right: 0.5rem;
+.list-folder-icon i.has-subfolders {
+    color: #ffd700;
 }
 
-.folder-more-indicator-list span {
+.list-folder-title {
+    font-size: 1rem;
     font-weight: 600;
-    margin-right: 0.5rem;
+    color: var(--dark-color);
+    line-height: 1.3;
+    word-wrap: break-word;
 }
 
-.folder-more-indicator-list small {
+.list-folder-meta {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.85rem;
     color: var(--secondary-color);
+}
+
+.list-folder-action {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    color: var(--secondary-color);
+    font-size: 0.9rem;
+    flex-shrink: 0;
+    transition: var(--transition);
+}
+
+.list-folder-item:hover .list-folder-action {
+    color: var(--primary-color);
+    transform: translateX(3px);
+}
+
+/* ===== 图片计数样式优化 ===== */
+.grid-folder-stats .image-count::before,
+.list-folder-meta .image-count::before {
+    content: '🖼️';
+    margin-right: 0.3rem;
     font-size: 0.8rem;
-    display: block;
-    margin-top: 0.3rem;
 }
 
-.folder-more-indicator-list .more-indicator-content:hover small {
-    color: rgba(255, 255, 255, 0.8);
+.grid-folder-stats .subfolder-count::before,
+.list-folder-meta .subfolder-count::before {
+    content: '📁';
+    margin-right: 0.3rem;
+    font-size: 0.8rem;
 }
 
-/* 层级结构中的图片卡片优化 */
-.folder-group-grid .image-card {
+/* ===== 空状态和加载状态 ===== */
+.hierarchical-grid-container .loading,
+.hierarchical-list-container .loading {
+    text-align: center;
+    padding: 3rem;
+    color: var(--secondary-color);
+    background: white;
+    border-radius: var(--border-radius);
     border: 1px solid var(--border-color);
-    border-radius: var(--border-radius);
-    overflow: hidden;
-    transition: var(--transition);
-    cursor: pointer;
-    background: white;
-    height: fit-content;
 }
 
-.folder-group-grid .image-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-    border-color: var(--primary-color);
-}
-
-.folder-group-list .image-list-item {
-    background: #fafbfc;
-    border: 1px solid #e2e8f0;
-    border-radius: var(--border-radius);
-    transition: var(--transition);
-}
-
-.folder-group-list .image-list-item:hover {
-    background: white;
-    border-color: var(--primary-color);
-    transform: translateX(5px);
-    box-shadow: var(--shadow);
-}
-
-/* 动画效果 */
-@keyframes expandFolder {
-    from {
-        max-height: 0;
-        opacity: 0;
-    }
-    to {
-        max-height: 1000px;
-        opacity: 1;
-    }
-}
-
-@keyframes collapseFolder {
-    from {
-        max-height: 1000px;
-        opacity: 1;
-    }
-    to {
-        max-height: 0;
-        opacity: 0;
-    }
-}
-
-.folder-images-grid.expanding {
-    animation: expandFolder 0.3s ease-out;
-}
-
-.folder-images-grid.collapsing {
-    animation: collapseFolder 0.3s ease-in;
-}
-
-.folder-images-list.expanding {
-    animation: expandFolder 0.3s ease-out;
-}
-
-.folder-images-list.collapsing {
-    animation: collapseFolder 0.3s ease-in;
-}
-
-/* 响应式设计 */
+/* ===== 响应式设计 ===== */
 @media (max-width: 768px) {
-    .folder-group-header {
-        flex-direction: column;
-        gap: 1rem;
-        align-items: stretch;
-        padding: 1rem;
-    }
-    
-    .folder-group-title {
-        justify-content: center;
-        text-align: center;
-    }
-    
-    .folder-group-actions {
-        justify-content: center;
-    }
-    
-    .folder-images-grid {
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    .folders-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
         gap: 1rem;
         padding: 1rem;
     }
     
-    .folder-images-list {
+    .images-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1rem;
         padding: 1rem;
     }
     
-    .folder-group-name {
-        font-size: 1rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .folder-group-header {
+    .grid-folder-header {
         padding: 0.8rem;
+        gap: 0.8rem;
     }
     
-    .folder-group-title {
-        gap: 0.5rem;
-    }
-    
-    .folder-toggle-btn {
-        width: 35px;
-        height: 35px;
-    }
-    
-    .folder-group-icon {
+    .grid-folder-icon {
         width: 40px;
         height: 40px;
         font-size: 1rem;
     }
     
-    .folder-images-grid {
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    .grid-folder-title {
+        font-size: 0.9rem;
+    }
+    
+    .list-folder-item {
+        padding: 0.8rem 1rem;
+        gap: 0.8rem;
+    }
+    
+    .list-folder-preview {
+        width: 60px;
+        height: 45px;
+    }
+    
+    .list-folder-title {
+        font-size: 0.9rem;
+    }
+    
+    .grid-breadcrumb,
+    .list-breadcrumb {
+        padding: 0.8rem 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .folders-grid {
+        grid-template-columns: 1fr;
         gap: 0.8rem;
         padding: 0.8rem;
     }
     
-    .folder-more-indicator .more-indicator-content {
-        padding: 1.5rem;
+    .images-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 0.8rem;
+        padding: 0.8rem;
+    }
+    
+    .grid-folder-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.5rem;
+    }
+    
+    .grid-folder-icon {
+        width: 35px;
+        height: 35px;
         font-size: 0.9rem;
     }
     
-    .btn-view-all {
-        padding: 0.4rem 0.8rem;
-        font-size: 0.8rem;
+    .grid-folder-title {
+        font-size: 0.85rem;
+    }
+    
+    .list-folder-item {
+        padding: 0.8rem;
+        flex-direction: column;
+        text-align: center;
+        gap: 0.5rem;
+    }
+    
+    .list-folder-preview {
+        width: 50px;
+        height: 40px;
+    }
+    
+    .list-folder-header {
+        justify-content: center;
+    }
+    
+    .list-folder-meta {
+        justify-content: center;
+    }
+    
+    .list-folder-action {
+        transform: rotate(90deg);
+    }
+    
+    .grid-breadcrumb,
+    .list-breadcrumb {
+        padding: 0.6rem 0.8rem;
+        font-size: 0.9rem;
     }
 }
 
-/* 深度指示器（如果需要多级嵌套） */
-.folder-group-grid[data-depth="0"] {
-    border-left: 4px solid var(--primary-color);
+/* ===== 动画效果 ===== */
+@keyframes folderHover {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-2px); }
+    100% { transform: translateY(-3px); }
 }
 
-.folder-group-grid[data-depth="1"] {
-    border-left: 4px solid var(--success-color);
-    margin-left: 1rem;
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
-.folder-group-grid[data-depth="2"] {
-    border-left: 4px solid var(--warning-color);
-    margin-left: 2rem;
+.grid-folder-card,
+.list-folder-item {
+    animation: fadeInUp 0.3s ease-out;
 }
 
-.folder-group-list[data-depth="0"] {
-    border-left: 4px solid var(--primary-color);
+.grid-folder-card:hover {
+    animation: folderHover 0.2s ease-out forwards;
 }
 
-.folder-group-list[data-depth="1"] {
-    border-left: 4px solid var(--success-color);
-    margin-left: 1rem;
-}
-
-.folder-group-list[data-depth="2"] {
-    border-left: 4px solid var(--warning-color);
-    margin-left: 2rem;
-}
-
-/* 空状态优化 */
-.folder-group-grid .loading,
-.folder-group-list .loading {
-    padding: 2rem;
-    text-align: center;
-    color: var(--secondary-color);
-}
-
-/* 搜索高亮 */
-.folder-group-name.highlight {
+/* ===== 搜索高亮效果 ===== */
+.grid-folder-title.highlight,
+.list-folder-title.highlight {
     background: linear-gradient(120deg, #fef3c7, #fde68a);
     padding: 0.2rem 0.5rem;
     border-radius: 4px;
