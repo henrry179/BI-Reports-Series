@@ -645,15 +645,15 @@ body {
 }
 
 .folder-card-hierarchical.depth-1 {
-    border-left: 4px solid #28a745;
+    border-left: 4px solid var(--success-color);
 }
 
 .folder-card-hierarchical.depth-2 {
-    border-left: 4px solid #ffc107;
+    border-left: 4px solid var(--warning-color);
 }
 
 .folder-card-hierarchical.depth-3 {
-    border-left: 4px solid #dc3545;
+    border-left: 4px solid var(--danger-color);
 }
 
 /* 文件夹头部 */
@@ -693,7 +693,7 @@ body {
 }
 
 .folder-icon-container i.has-subfolders {
-    color: #ffc107;
+    color: var(--warning-color);
 }
 
 .folder-info {
@@ -2008,4 +2008,464 @@ body {
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+/* ===== 多层级网格视图和列表视图样式 ===== */
+
+/* 层级网格容器 */
+.gallery-grid-hierarchical {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+/* 层级列表容器 */
+.gallery-list-hierarchical {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+/* 文件夹组通用样式 */
+.folder-group-grid,
+.folder-group-list {
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+    transition: var(--transition);
+}
+
+.folder-group-grid:hover,
+.folder-group-list:hover {
+    box-shadow: var(--shadow-lg);
+}
+
+/* 文件夹组头部 */
+.folder-group-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+    border-bottom: 1px solid var(--border-color);
+    min-height: 70px;
+}
+
+.folder-group-title {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex: 1;
+}
+
+.folder-toggle-btn {
+    background: none;
+    border: none;
+    padding: 0.5rem;
+    cursor: pointer;
+    border-radius: 50%;
+    transition: var(--transition);
+    color: var(--secondary-color);
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.folder-toggle-btn:hover {
+    background: rgba(37, 99, 235, 0.1);
+    color: var(--primary-color);
+    transform: scale(1.1);
+}
+
+.folder-group-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    color: white;
+    border-radius: var(--border-radius);
+    font-size: 1.2rem;
+}
+
+.folder-group-info {
+    flex: 1;
+}
+
+.folder-group-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--dark-color);
+    margin: 0 0 0.3rem 0;
+    line-height: 1.3;
+}
+
+.folder-group-count {
+    font-size: 0.9rem;
+    color: var(--secondary-color);
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.folder-group-count::before {
+    content: '📊';
+    font-size: 0.8rem;
+}
+
+.folder-group-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn-view-all {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: var(--transition);
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-view-all:hover {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+}
+
+/* 文件夹内图片网格容器 */
+.folder-images-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.folder-images-grid.collapsed {
+    max-height: 300px;
+    overflow: hidden;
+    position: relative;
+}
+
+.folder-images-grid.expanded {
+    max-height: none;
+}
+
+/* 文件夹内图片列表容器 */
+.folder-images-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.folder-images-list.collapsed {
+    max-height: 250px;
+    overflow: hidden;
+    position: relative;
+}
+
+.folder-images-list.expanded {
+    max-height: none;
+}
+
+/* 更多图片指示器 - 网格版本 */
+.folder-more-indicator {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1rem;
+}
+
+.folder-more-indicator .more-indicator-content {
+    background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+    border: 2px dashed var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: var(--transition);
+    min-width: 200px;
+}
+
+.folder-more-indicator .more-indicator-content:hover {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    color: white;
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.folder-more-indicator i {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.folder-more-indicator span {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+}
+
+.folder-more-indicator small {
+    color: var(--secondary-color);
+    font-size: 0.8rem;
+}
+
+.folder-more-indicator .more-indicator-content:hover small {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+/* 更多图片指示器 - 列表版本 */
+.folder-more-indicator-list {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1rem;
+}
+
+.folder-more-indicator-list .more-indicator-content {
+    background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+    border: 2px dashed var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 1.5rem 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: var(--transition);
+    width: 100%;
+    max-width: 400px;
+}
+
+.folder-more-indicator-list .more-indicator-content:hover {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    color: white;
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.folder-more-indicator-list i {
+    font-size: 1.2rem;
+    margin-right: 0.5rem;
+}
+
+.folder-more-indicator-list span {
+    font-weight: 600;
+    margin-right: 0.5rem;
+}
+
+.folder-more-indicator-list small {
+    color: var(--secondary-color);
+    font-size: 0.8rem;
+    display: block;
+    margin-top: 0.3rem;
+}
+
+.folder-more-indicator-list .more-indicator-content:hover small {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+/* 层级结构中的图片卡片优化 */
+.folder-group-grid .image-card {
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    transition: var(--transition);
+    cursor: pointer;
+    background: white;
+    height: fit-content;
+}
+
+.folder-group-grid .image-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    border-color: var(--primary-color);
+}
+
+.folder-group-list .image-list-item {
+    background: #fafbfc;
+    border: 1px solid #e2e8f0;
+    border-radius: var(--border-radius);
+    transition: var(--transition);
+}
+
+.folder-group-list .image-list-item:hover {
+    background: white;
+    border-color: var(--primary-color);
+    transform: translateX(5px);
+    box-shadow: var(--shadow);
+}
+
+/* 动画效果 */
+@keyframes expandFolder {
+    from {
+        max-height: 0;
+        opacity: 0;
+    }
+    to {
+        max-height: 1000px;
+        opacity: 1;
+    }
+}
+
+@keyframes collapseFolder {
+    from {
+        max-height: 1000px;
+        opacity: 1;
+    }
+    to {
+        max-height: 0;
+        opacity: 0;
+    }
+}
+
+.folder-images-grid.expanding {
+    animation: expandFolder 0.3s ease-out;
+}
+
+.folder-images-grid.collapsing {
+    animation: collapseFolder 0.3s ease-in;
+}
+
+.folder-images-list.expanding {
+    animation: expandFolder 0.3s ease-out;
+}
+
+.folder-images-list.collapsing {
+    animation: collapseFolder 0.3s ease-in;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .folder-group-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch;
+        padding: 1rem;
+    }
+    
+    .folder-group-title {
+        justify-content: center;
+        text-align: center;
+    }
+    
+    .folder-group-actions {
+        justify-content: center;
+    }
+    
+    .folder-images-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1rem;
+        padding: 1rem;
+    }
+    
+    .folder-images-list {
+        padding: 1rem;
+    }
+    
+    .folder-group-name {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .folder-group-header {
+        padding: 0.8rem;
+    }
+    
+    .folder-group-title {
+        gap: 0.5rem;
+    }
+    
+    .folder-toggle-btn {
+        width: 35px;
+        height: 35px;
+    }
+    
+    .folder-group-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+    
+    .folder-images-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 0.8rem;
+        padding: 0.8rem;
+    }
+    
+    .folder-more-indicator .more-indicator-content {
+        padding: 1.5rem;
+        font-size: 0.9rem;
+    }
+    
+    .btn-view-all {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.8rem;
+    }
+}
+
+/* 深度指示器（如果需要多级嵌套） */
+.folder-group-grid[data-depth="0"] {
+    border-left: 4px solid var(--primary-color);
+}
+
+.folder-group-grid[data-depth="1"] {
+    border-left: 4px solid var(--success-color);
+    margin-left: 1rem;
+}
+
+.folder-group-grid[data-depth="2"] {
+    border-left: 4px solid var(--warning-color);
+    margin-left: 2rem;
+}
+
+.folder-group-list[data-depth="0"] {
+    border-left: 4px solid var(--primary-color);
+}
+
+.folder-group-list[data-depth="1"] {
+    border-left: 4px solid var(--success-color);
+    margin-left: 1rem;
+}
+
+.folder-group-list[data-depth="2"] {
+    border-left: 4px solid var(--warning-color);
+    margin-left: 2rem;
+}
+
+/* 空状态优化 */
+.folder-group-grid .loading,
+.folder-group-list .loading {
+    padding: 2rem;
+    text-align: center;
+    color: var(--secondary-color);
+}
+
+/* 搜索高亮 */
+.folder-group-name.highlight {
+    background: linear-gradient(120deg, #fef3c7, #fde68a);
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    animation: highlight 2s ease-in-out;
+}
+
+@keyframes highlight {
+    0%, 100% { background: transparent; }
+    50% { background: linear-gradient(120deg, #fef3c7, #fde68a); }
 } 
