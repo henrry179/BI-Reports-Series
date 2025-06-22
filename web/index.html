@@ -90,10 +90,14 @@
                 <div class="controls">
                     <div class="search-box">
                         <i class="fas fa-search"></i>
-                        <input type="text" id="search-input" placeholder="搜索项目名称或图表类型...">
+                        <input type="text" id="search-input" placeholder="搜索项目名称或图表类型..." autocomplete="off">
                         <button id="clear-search" class="clear-btn">
                             <i class="fas fa-times"></i>
                         </button>
+                        <button id="advanced-search-btn" class="advanced-search-btn" title="高级搜索">
+                            <i class="fas fa-sliders-h"></i>
+                        </button>
+                        <div id="search-suggestions" class="search-suggestions"></div>
                     </div>
                     
                     <div class="filters">
@@ -105,10 +109,17 @@
                             <option value="">所有类型</option>
                         </select>
                         
+                        <select id="special-filter" class="filter-select">
+                            <option value="">特殊筛选</option>
+                            <option value="favorites">我的收藏</option>
+                            <option value="recent">最近查看</option>
+                        </select>
+                        
                         <select id="sort-select" class="filter-select">
                             <option value="name">按名称排序</option>
                             <option value="folder">按项目排序</option>
                             <option value="size">按大小排序</option>
+                            <option value="viewed">按查看时间</option>
                         </select>
                     </div>
                 </div>
@@ -933,6 +944,9 @@ python -m http.server 8000
                     </div>
                 </div>
                 <div class="modal-footer">
+                    <button id="favorite-btn" class="btn btn-favorite" onclick="gallery.toggleFavorite()">
+                        <i class="far fa-heart"></i> 收藏
+                    </button>
                     <button id="download-btn" class="btn btn-primary">
                         <i class="fas fa-download"></i> 下载图片
                     </button>

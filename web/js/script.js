@@ -16,6 +16,11 @@ class ImageGallery {
         this.currentFolderPath = [];
         this.folderStates = new Map(); // 存储每个文件夹的展开状态
         
+        // 搜索增强功能
+        this.searchHistory = JSON.parse(localStorage.getItem('bi-search-history') || '[]');
+        this.favoriteImages = new Set(JSON.parse(localStorage.getItem('bi-favorites') || '[]'));
+        this.recentViewed = JSON.parse(localStorage.getItem('bi-recent-viewed') || '[]');
+        
         // DOM 元素
         this.galleryContainer = document.getElementById('gallery-container');
         this.searchInput = document.getElementById('search-input');
@@ -105,7 +110,24 @@ class ImageGallery {
         // 筛选器
         this.folderFilter.addEventListener('change', () => this.filterImages());
         this.categoryFilter.addEventListener('change', () => this.filterImages());
+        
+        // 新增特殊筛选器
+        this.specialFilter = document.getElementById('special-filter');
+        this.specialFilter.addEventListener('change', () => this.filterImages());
+        
         this.sortSelect.addEventListener('change', () => this.sortAndRenderImages());
+        
+        // 搜索建议功能
+        this.searchInput.addEventListener('focus', () => this.showSearchSuggestions());
+        this.searchInput.addEventListener('blur', () => {
+            // 延迟隐藏，让点击事件能正常执行
+            setTimeout(() => this.hideSearchSuggestions(), 200);
+        });
+        
+        // 高级搜索按钮
+        document.getElementById('advanced-search-btn').addEventListener('click', () => {
+            this.toggleAdvancedSearch();
+        });
         
         // 视图切换
         document.querySelectorAll('.view-btn').forEach(btn => {
@@ -205,12 +227,37 @@ class ImageGallery {
         const searchTerm = this.searchInput.value.toLowerCase().trim();
         const selectedFolder = this.folderFilter.value;
         const selectedCategory = this.categoryFilter.value;
+        const selectedSpecial = this.specialFilter.value;
         
-        this.filteredImages = this.imageData.images.filter(image => {
+        // 保存搜索历史
+        if (searchTerm && !this.searchHistory.includes(searchTerm)) {
+            this.searchHistory.unshift(searchTerm);
+            this.searchHistory = this.searchHistory.slice(0, 10); // 只保留最近10条
+            localStorage.setItem('bi-search-history', JSON.stringify(this.searchHistory));
+        }
+        
+        let baseImages = this.imageData.images;
+        
+        // 特殊筛选逻辑
+        if (selectedSpecial === 'favorites') {
+            baseImages = baseImages.filter(image => this.favoriteImages.has(image.path));
+        } else if (selectedSpecial === 'recent') {
+            const recentPaths = this.recentViewed.map(item => item.path);
+            baseImages = baseImages.filter(image => recentPaths.includes(image.path));
+            // 按最近查看顺序排序
+            baseImages.sort((a, b) => {
+                const aIndex = recentPaths.indexOf(a.path);
+                const bIndex = recentPaths.indexOf(b.path);
+                return aIndex - bIndex;
+            });
+        }
+        
+        this.filteredImages = baseImages.filter(image => {
             const matchesSearch = !searchTerm || 
                 image.filename.toLowerCase().includes(searchTerm) ||
                 image.clean_folder_name.toLowerCase().includes(searchTerm) ||
-                image.category.toLowerCase().includes(searchTerm);
+                image.category.toLowerCase().includes(searchTerm) ||
+                this.getImageTags(image).some(tag => tag.toLowerCase().includes(searchTerm));
             
             const matchesFolder = !selectedFolder || image.folder === selectedFolder;
             const matchesCategory = !selectedCategory || image.category === selectedCategory;
@@ -219,6 +266,98 @@ class ImageGallery {
         });
         
         this.sortAndRenderImages();
+    }
+    
+    getImageTags(image) {
+        // 根据图片内容自动生成标签
+        const tags = [];
+        
+        // 基于文件名生成标签
+        if (image.filename.includes('仪表板') || image.filename.includes('dashboard')) tags.push('仪表板');
+        if (image.filename.includes('图表') || image.filename.includes('chart')) tags.push('图表');
+        if (image.filename.includes('数据') || image.filename.includes('data')) tags.push('数据');
+        if (image.filename.includes('分析') || image.filename.includes('analysis')) tags.push('分析');
+        if (image.filename.includes('销售') || image.filename.includes('sales')) tags.push('销售');
+        if (image.filename.includes('财务') || image.filename.includes('financial')) tags.push('财务');
+        if (image.filename.includes('用户') || image.filename.includes('user')) tags.push('用户');
+        if (image.filename.includes('产品') || image.filename.includes('product')) tags.push('产品');
+        
+        // 基于分类生成标签
+        if (image.category === '仪表板') tags.push('dashboard', '看板');
+        if (image.category === '分析图表') tags.push('chart', 'visualization');
+        if (image.category === '动态演示') tags.push('动态', 'gif', 'demo');
+        
+        return tags;
+    }
+    
+    showSearchSuggestions() {
+        const suggestionsContainer = document.getElementById('search-suggestions');
+        const suggestions = [];
+        
+        // 搜索历史
+        this.searchHistory.forEach(term => {
+            suggestions.push({
+                type: 'history',
+                text: term,
+                icon: 'fas fa-history',
+                action: () => {
+                    this.searchInput.value = term;
+                    this.filterImages();
+                    this.hideSearchSuggestions();
+                }
+            });
+        });
+        
+        // 热门标签
+        const popularTags = ['仪表板', '数据分析', '销售分析', '财务分析', '用户分析'];
+        popularTags.forEach(tag => {
+            suggestions.push({
+                type: 'tag',
+                text: tag,
+                icon: 'fas fa-tag',
+                action: () => {
+                    this.searchInput.value = tag;
+                    this.filterImages();
+                    this.hideSearchSuggestions();
+                }
+            });
+        });
+        
+        // 显示建议
+        if (suggestions.length > 0) {
+            suggestionsContainer.innerHTML = suggestions.map(suggestion => `
+                <div class="suggestion-item" onclick="suggestion.action()">
+                    <i class="${suggestion.icon}"></i>
+                    <span class="suggestion-text">${suggestion.text}</span>
+                </div>
+            `).join('');
+            
+            // 添加点击事件
+            suggestionsContainer.querySelectorAll('.suggestion-item').forEach((item, index) => {
+                item.addEventListener('click', suggestions[index].action);
+            });
+            
+            suggestionsContainer.classList.add('active');
+        }
+    }
+    
+    hideSearchSuggestions() {
+        const suggestionsContainer = document.getElementById('search-suggestions');
+        suggestionsContainer.classList.remove('active');
+    }
+    
+    toggleAdvancedSearch() {
+        // 简单的高级搜索实现 - 显示搜索提示
+        const searchInput = this.searchInput;
+        const currentPlaceholder = searchInput.placeholder;
+        
+        if (currentPlaceholder.includes('高级')) {
+            searchInput.placeholder = '搜索项目名称或图表类型...';
+        } else {
+            searchInput.placeholder = '高级搜索：支持多关键词、标签搜索...';
+        }
+        
+        searchInput.focus();
     }
     
     sortAndRenderImages() {
@@ -232,6 +371,11 @@ class ImageGallery {
                     return a.clean_folder_name.localeCompare(b.clean_folder_name);
                 case 'size':
                     return b.size - a.size;
+                case 'viewed':
+                    // 按查看时间排序（最近查看的在前）
+                    const aViewTime = this.recentViewed.find(item => item.path === a.path)?.viewedAt || '';
+                    const bViewTime = this.recentViewed.find(item => item.path === b.path)?.viewedAt || '';
+                    return bViewTime.localeCompare(aViewTime);
                 default:
                     return 0;
             }
@@ -512,8 +656,57 @@ class ImageGallery {
         document.getElementById('info-filename').textContent = image.filename;
         document.getElementById('info-size').textContent = this.formatFileSize(image.size);
         
+        // 更新收藏状态
+        this.updateFavoriteButton(image.path);
+        
+        // 添加到最近查看
+        this.addToRecentViewed(image);
+        
         this.modal.classList.add('active');
         document.body.style.overflow = 'hidden';
+    }
+    
+    updateFavoriteButton(imagePath) {
+        const favoriteBtn = document.getElementById('favorite-btn');
+        if (favoriteBtn) {
+            const isFavorite = this.favoriteImages.has(imagePath);
+            favoriteBtn.innerHTML = isFavorite ? 
+                '<i class="fas fa-heart"></i> 已收藏' : 
+                '<i class="far fa-heart"></i> 收藏';
+            favoriteBtn.classList.toggle('favorited', isFavorite);
+        }
+    }
+    
+    toggleFavorite() {
+        const currentImage = this.filteredImages[this.currentImageIndex];
+        if (!currentImage) return;
+        
+        if (this.favoriteImages.has(currentImage.path)) {
+            this.favoriteImages.delete(currentImage.path);
+        } else {
+            this.favoriteImages.add(currentImage.path);
+        }
+        
+        localStorage.setItem('bi-favorites', JSON.stringify([...this.favoriteImages]));
+        this.updateFavoriteButton(currentImage.path);
+    }
+    
+    addToRecentViewed(image) {
+        // 移除已存在的相同图片
+        this.recentViewed = this.recentViewed.filter(item => item.path !== image.path);
+        
+        // 添加到开头
+        this.recentViewed.unshift({
+            path: image.path,
+            filename: image.filename,
+            folder: image.clean_folder_name,
+            viewedAt: new Date().toISOString()
+        });
+        
+        // 只保留最近20个
+        this.recentViewed = this.recentViewed.slice(0, 20);
+        
+        localStorage.setItem('bi-recent-viewed', JSON.stringify(this.recentViewed));
     }
     
     closeModal() {
