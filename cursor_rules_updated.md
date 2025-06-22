@@ -50,6 +50,38 @@
      4. **质量验证**: 确保功能完整性和代码质量
      5. **循环迭代**: 重复整个流程直至项目完成
 
+### 4. **任务完成音频提醒机制** 🔔
+   - **每次自动完成进度任务后，必须使用音频提醒通知用户任务已更新完成**
+   - **音频提醒触发条件**：
+     - README.md开发进度更新完成后
+     - Git推送到远程仓库成功后
+     - 关键模块功能优化完成后
+     - 测试验证通过后
+     - 文档同步更新完成后
+   - **跨平台音频播放实现**：
+     ```bash
+     # macOS系统 - 使用系统音效
+     afplay /System/Library/Sounds/Glass.aiff
+     say "任务已完成，请回来确认检查"
+     
+     # Linux系统 - 使用paplay或aplay
+     paplay /usr/share/sounds/alsa/Front_Right.wav
+     espeak "Task completed, please come back to check"
+     
+     # Windows系统 - 使用PowerShell
+     [console]::beep(800,500)
+     Add-Type -AssemblyName System.Speech; (New-Object System.Speech.Synthesis.SpeechSynthesizer).Speak("Task completed")
+     ```
+   - **自定义音频选项**：
+     - 支持.wav、.mp3、.aiff等格式的自定义提醒音
+     - 可设置不同任务类型使用不同的提醒音
+     - 支持音量调节和静默模式设置
+   - **智能提醒策略**：
+     - 工作时间(9:00-18:00)使用温和提示音
+     - 非工作时间使用更明显的提醒音
+     - 连续任务完成时延迟5秒再播放，避免频繁打扰
+     - 支持用户自定义提醒频率和方式
+
 ---
 
 ## 📊 升级版开发进度模板
@@ -95,6 +127,70 @@ git push
 
 echo "✅ 开发进度已更新并推送到远程仓库"
 echo "📅 更新时间: $CURRENT_TIME"
+
+# 任务完成音频提醒
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    # macOS
+    afplay /System/Library/Sounds/Glass.aiff
+    say "开发进度更新完成，请回来确认检查"
+elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
+    # Linux
+    paplay /usr/share/sounds/alsa/Front_Right.wav 2>/dev/null || aplay /usr/share/sounds/alsa/Front_Right.wav 2>/dev/null
+    espeak "Development progress updated, please come back to check" 2>/dev/null
+elif [[ "$OSTYPE" == "msys" ]] || [[ "$OSTYPE" == "cygwin" ]]; then
+    # Windows
+    powershell -Command "[console]::beep(800,500); Add-Type -AssemblyName System.Speech; (New-Object System.Speech.Synthesis.SpeechSynthesizer).Speak('Development progress updated')"
+fi
+```
+
+### 音频提醒增强脚本
+创建专用的音频提醒脚本：
+
+```bash
+#!/bin/bash
+# 文件名: audio_notify.sh
+
+TASK_TYPE="${1:-general}"
+MESSAGE="${2:-任务已完成，请回来确认检查}"
+
+# 根据任务类型选择不同的音效
+case $TASK_TYPE in
+    "git")
+        SOUND_FILE="/System/Library/Sounds/Glass.aiff"
+        ;;
+    "test")
+        SOUND_FILE="/System/Library/Sounds/Ping.aiff"
+        ;;
+    "deploy")
+        SOUND_FILE="/System/Library/Sounds/Hero.aiff"
+        ;;
+    *)
+        SOUND_FILE="/System/Library/Sounds/Glass.aiff"
+        ;;
+esac
+
+# 检查当前时间，决定提醒强度
+HOUR=$(date +%H)
+if [ $HOUR -ge 9 ] && [ $HOUR -le 18 ]; then
+    # 工作时间 - 温和提醒
+    VOLUME="0.3"
+else
+    # 非工作时间 - 明显提醒
+    VOLUME="0.7"
+fi
+
+# 播放音频提醒
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    osascript -e "set volume output volume $(echo "$VOLUME * 100" | bc)"
+    afplay "$SOUND_FILE"
+    say "$MESSAGE"
+elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
+    pactl set-sink-volume @DEFAULT_SINK@ ${VOLUME}
+    paplay "$SOUND_FILE" 2>/dev/null
+    espeak "$MESSAGE" 2>/dev/null
+fi
+
+echo "🔔 音频提醒已播放: $MESSAGE"
 ```
 
 ### Git Hook自动化
@@ -141,10 +237,12 @@ echo "最后更新时间: $TIMESTAMP" >> README.md
 - [ ] 执行完整的git提交流程（add → commit → push）
 - [ ] 提交信息包含模块名称和时间戳
 - [ ] 验证远程仓库已成功更新
+- [ ] **播放音频提醒通知任务完成**
 - [ ] 检查其他模块是否需要相应调整
 - [ ] 确认代码质量和测试覆盖率
 - [ ] 更新相关文档和API说明
 - [ ] 规划下一个开发目标和优先级
+- [ ] 确认音频提醒系统正常工作
 
 ---
 
@@ -161,5 +259,5 @@ echo "最后更新时间: $TIMESTAMP" >> README.md
 
 ---
 
-**最后更新时间**: 2025-01-13 16:45:30  
-**规则版本**: v2.0 - 实时时间记录增强版 
+**最后更新时间**: 2025-06-22 10:49:18  
+**规则版本**: v2.1 - 音频提醒机制增强版 
